@@ -1,7 +1,10 @@
 """Nukera CLI - start, stop, status for the zapret-based censorship bypass."""
 
 import ctypes
+import ctypes.wintypes
+import hashlib
 import http.client
+import json
 import os
 import re
 import shutil
@@ -20,7 +23,18 @@ _CLI_DIR = os.path.dirname(os.path.abspath(__file__))
 if _CLI_DIR not in sys.path:
     sys.path.insert(0, _CLI_DIR)
 
-import tgproxy
+# tgproxy pulls in the vendored asyncio proxy stack (a slow import). Short
+# CLI calls — the GUI runs `status` every couple of seconds — must not pay
+# for it, so it is imported lazily via _tg().
+tgproxy = None
+
+
+def _tg():
+    global tgproxy
+    if tgproxy is None:
+        import tgproxy as _tgproxy
+        tgproxy = _tgproxy
+    return tgproxy
 
 APP_VERSION = "0.7.0"
 DEFAULT_STRATEGY = "general (ALT11)"
@@ -34,16 +48,23 @@ STATE = os.path.join(ROOT, "state")
 PID_FILE = os.path.join(STATE, "nukera.pid")
 LOG_FILE = os.path.join(STATE, "winws.log")
 WORKER_PID = os.path.join(STATE, "worker.pid")
+WORKER_VER = os.path.join(STATE, "worker.md5")
 JOBS = os.path.join(STATE, "jobs")
 STRATEGY_FILE = os.path.join(STATE, "strategy.txt")
 ADAPT_ACTIVE = os.path.join(STATE, "adapt.active")
 ADAPT_CANCEL = os.path.join(STATE, "adapt.cancel")
 ADAPT_JOB = os.path.join(STATE, "adapt.job")
+ADAPT_SITES_FILE = os.path.join(STATE, "adapt.sites.json")
 ADAPT_TIMEOUT = 900
 ADAPT_PROBE_TIMEOUT = 3.0
 TGPROXY_SECRET = os.path.join(STATE, "tgproxy.secret")
 TGPROXY_PID = os.path.join(STATE, "tgproxy.pid")
 TGPROXY_READY = os.path.join(STATE, "tgproxy.ready")
+STATUS_FILE = os.path.join(STATE, "engine.status")
+ROUTING_FILE = os.path.join(STATE, "routing.json")
+HYBRID_FILE = os.path.join(STATE, "hybrid.json")
+USER_LIST = os.path.join(LISTS, "list-general-user.txt")
+EXCLUDE_USER_LIST = os.path.join(LISTS, "list-exclude-user.txt")
 
 HOSTS_FILE = os.path.join(
     os.environ.get("SystemRoot", r"C:\Windows"),
@@ -184,6 +205,33 @@ DISCORD_IPS = ["162.159.138.232", "162.159.137.232",
 DISCORD_DOMAINS = ["discord.com", "updates.discord.com"]
 DISCORD_HOSTS_LINES = ["%s %s" % (ip, d) for ip in DISCORD_IPS for d in DISCORD_DOMAINS]
 
+# Routing categories for the GUI "only selected sites" mode (Happ-style
+# routing: winws desyncs only flows whose SNI matches the user hostlist).
+# Entries match the domain and all its subdomains.
+ROUTING_CATEGORY_DOMAINS = {
+    "youtube": [
+        "youtube.com", "youtu.be", "yt.be", "ytimg.com", "ggpht.com",
+        "youtube-nocookie.com", "youtubekids.com", "googlevideo.com",
+        "youtubei.googleapis.com", "youtube.googleapis.com",
+        "youtubeembeddedplayer.googleapis.com", "yt-video-upload.l.google.com",
+        "wide-youtube.l.google.com", "youtube-ui.l.google.com",
+        "ytimg.l.google.com", "yt3.googleusercontent.com",
+    ],
+    "telegram": TELEGRAM_WEB_DOMAINS,
+    "discord": [
+        "discord.com", "discord.gg", "discord.media", "discordapp.com",
+        "discordapp.net", "discord.dev", "discordstatus.com",
+    ],
+    "meta": META_DOMAINS,
+    "github": GITHUB_DOMAINS,
+    "google": [
+        "google.com", "google.ru", "gstatic.com", "googleapis.com",
+        "googleusercontent.com", "ggpht.com", "google.com.ua",
+        "googlevideo.com", "youtube.com", "youtu.be", "ytimg.com",
+        "youtube-nocookie.com", "play.google.com",
+    ],
+}
+
 PROBE_HOSTS = [("Discord", "discord.com", "/"), ("YouTube", "www.youtube.com", "/generate_204")]
 TLS_TESTS = [("H", None), ("12", "1.2"), ("13", "1.3")]
 PING_HOSTS = ["1.1.1.1", "8.8.8.8"]
@@ -227,8 +275,16 @@ def _write_hosts(text):
         try:
             with open(tmp, "w", encoding="utf-8") as f:
                 f.write(text)
-            os.replace(tmp, HOSTS_FILE)
-            return
+            try:
+                os.replace(tmp, HOSTS_FILE)
+                return
+            except PermissionError:
+                # MoveFileEx needs DELETE on the target; some security
+                # software denies the replace but allows a plain write.
+                with open(HOSTS_FILE, "w", encoding="utf-8") as f:
+                    f.write(text)
+                _remove_quiet(tmp)
+                return
         except OSError:
             if attempt == 11:
                 raise
@@ -360,7 +416,7 @@ def _ipall_range_count():
 
 
 def _telegram_proxy_secret():
-    return tgproxy.load_or_create_secret(TGPROXY_SECRET)
+    return _tg().load_or_create_secret(TGPROXY_SECRET)
 
 
 def _tgproxy_pid():
@@ -373,7 +429,7 @@ def _tgproxy_pid():
 
 def _tgproxy_alive():
     pid = _tgproxy_pid()
-    return bool(pid and _pid_alive(pid))
+    return bool(pid and _pid_alive(pid) and _pid_is_image(pid, _PYTHON_IMAGES))
 
 
 def _telegram_proxy_start():
@@ -383,7 +439,7 @@ def _telegram_proxy_start():
     Returns (ok, pid)."""
     if _tgproxy_alive():
         print("Telegram Desktop proxy: already running on %s:%s (MTProto)."
-              % (tgproxy.TGPROXY_HOST, tgproxy.TGPROXY_PORT))
+              % (_tg().TGPROXY_HOST, _tg().TGPROXY_PORT))
         return True, _tgproxy_pid()
     _remove_quiet(TGPROXY_PID)
     _remove_quiet(TGPROXY_READY)
@@ -394,7 +450,7 @@ def _telegram_proxy_start():
         py = pyw
     server = os.path.join(_CLI_DIR, "tgproxy.py")
     p = subprocess.Popen(
-        [py, server, str(tgproxy.TGPROXY_PORT), secret, TGPROXY_READY],
+        [py, server, str(_tg().TGPROXY_PORT), secret, TGPROXY_READY],
         cwd=ROOT,
         creationflags=subprocess.CREATE_NO_WINDOW | 0x00000008,
     )
@@ -413,7 +469,7 @@ def _telegram_proxy_start():
         return False, None
     try:
         s = socket.create_connection(
-            (tgproxy.TGPROXY_HOST, tgproxy.TGPROXY_PORT), timeout=2.0)
+            (_tg().TGPROXY_HOST, _tg().TGPROXY_PORT), timeout=2.0)
         s.close()
     except OSError:
         _kill(p.pid)
@@ -422,7 +478,7 @@ def _telegram_proxy_start():
     with open(TGPROXY_PID, "w", encoding="utf-8") as f:
         f.write("%s\n" % p.pid)
     print("Telegram Desktop proxy: running on %s:%s (MTProto)."
-          % (tgproxy.TGPROXY_HOST, tgproxy.TGPROXY_PORT))
+          % (_tg().TGPROXY_HOST, _tg().TGPROXY_PORT))
     return True, p.pid
 
 
@@ -436,7 +492,7 @@ def _telegram_proxy_stop():
 
 def _tgproxy_status_text():
     if _tgproxy_alive():
-        return "enabled (%s:%s)" % (tgproxy.TGPROXY_HOST, tgproxy.TGPROXY_PORT)
+        return "enabled (%s:%s)" % (_tg().TGPROXY_HOST, _tg().TGPROXY_PORT)
     return "disabled"
 
 
@@ -454,9 +510,9 @@ def cmd_tgproxy_setup():
     if not ok:
         return 1
     secret = _telegram_proxy_secret()
-    print("TGPROXY_LINK=%s" % tgproxy.make_proxy_link(tgproxy.TGPROXY_PORT, secret))
+    print("TGPROXY_LINK=%s" % _tg().make_proxy_link(_tg().TGPROXY_PORT, secret))
     print("Telegram Desktop proxy is running on %s:%s."
-          % (tgproxy.TGPROXY_HOST, tgproxy.TGPROXY_PORT))
+          % (_tg().TGPROXY_HOST, _tg().TGPROXY_PORT))
     return 0
 
 
@@ -480,6 +536,24 @@ def _read_worker_pid():
 def _write_worker_pid(pid):
     with open(WORKER_PID, "w") as f:
         f.write("%s\n" % pid)
+
+
+def _cli_hash():
+    """md5 of the running CLI source; used to detect that the resident
+    worker predates the last cli\\nukera.py update."""
+    try:
+        with open(__file__, "rb") as f:
+            return hashlib.md5(f.read()).hexdigest()
+    except OSError:
+        return ""
+
+
+def _worker_is_current():
+    try:
+        with open(WORKER_VER, "r", encoding="utf-8") as f:
+            return f.read().strip() == _cli_hash()
+    except OSError:
+        return False
 
 
 def _worker_alive():
@@ -507,11 +581,140 @@ def _run(cmd, check=False):
         return -1, "", "command not found: %r" % cmd[0]
 
 
+_kernel32 = None
+if os.name == "nt":
+    try:
+        _kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        _kernel32.OpenProcess.restype = ctypes.wintypes.HANDLE
+        _kernel32.OpenProcess.argtypes = [
+            ctypes.wintypes.DWORD, ctypes.wintypes.BOOL, ctypes.wintypes.DWORD]
+        _kernel32.GetExitCodeProcess.restype = ctypes.wintypes.BOOL
+        _kernel32.GetExitCodeProcess.argtypes = [
+            ctypes.wintypes.HANDLE, ctypes.POINTER(ctypes.wintypes.DWORD)]
+        _kernel32.CloseHandle.argtypes = [ctypes.wintypes.HANDLE]
+        _kernel32.QueryFullProcessImageNameW.restype = ctypes.wintypes.BOOL
+        _kernel32.QueryFullProcessImageNameW.argtypes = [
+            ctypes.wintypes.HANDLE, ctypes.wintypes.DWORD,
+            ctypes.wintypes.LPWSTR, ctypes.POINTER(ctypes.wintypes.DWORD)]
+    except (OSError, AttributeError):
+        _kernel32 = None
+
+_PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+_STILL_ACTIVE = 259
+_ACCESS_DENIED = 5
+
+
 def _pid_alive(pid):
+    # The GUI polls `status` every couple of seconds; the old tasklist-based
+    # check spawned a console process per call and made the loading cursor
+    # flicker. Query the process handle directly instead.
     if not pid:
         return False
-    code, out, _ = _run(["tasklist", "/FI", "PID eq %s" % pid, "/NH"])
-    return code == 0 and str(pid) in out
+    try:
+        pid = int(pid)
+    except (TypeError, ValueError):
+        return False
+    if pid <= 0 or _kernel32 is None:
+        return False
+    handle = _kernel32.OpenProcess(
+        _PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+    if not handle:
+        # ACCESS_DENIED means the process exists but is elevated.
+        return ctypes.get_last_error() == _ACCESS_DENIED
+    try:
+        code = ctypes.wintypes.DWORD()
+        if not _kernel32.GetExitCodeProcess(handle, ctypes.byref(code)):
+            return True
+        return code.value == _STILL_ACTIVE
+    finally:
+        _kernel32.CloseHandle(handle)
+
+
+def _pid_image_name(pid):
+    """Executable path of the process, or "" if it cannot be determined.
+    PID records get reused by Windows, so a stale PID file can point at an
+    unrelated process (observed: worker.pid -> svchost.exe); callers use the
+    image name to tell those apart."""
+    if not pid or _kernel32 is None:
+        return ""
+    try:
+        pid = int(pid)
+    except (TypeError, ValueError):
+        return ""
+    if pid <= 0:
+        return ""
+    handle = _kernel32.OpenProcess(
+        _PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+    if not handle:
+        return ""
+    try:
+        size = ctypes.wintypes.DWORD(1024)
+        buf = ctypes.create_unicode_buffer(1024)
+        if _kernel32.QueryFullProcessImageNameW(handle, 0, buf,
+                                                ctypes.byref(size)):
+            return buf.value
+        return ""
+    finally:
+        _kernel32.CloseHandle(handle)
+
+
+def _pid_is_image(pid, names):
+    # Empty image name (query failed on a live process) keeps the old
+    # PID-only behavior instead of reporting a live process as dead.
+    image = _pid_image_name(pid)
+    if not image:
+        return True
+    return os.path.basename(image).lower() in names
+
+
+_PYTHON_IMAGES = ("pythonw.exe", "python.exe")
+
+
+def _worker_ping_ok():
+    # A stale worker.pid can point at an unrelated python.exe (PID reuse or
+    # another script on the bundled interpreter) — or at a worker of an
+    # OLDER build, which would answer "unknown command: ping". A current
+    # worker deletes the request silently within its 0.25s loop; anything
+    # else fails the check.
+    try:
+        os.makedirs(JOBS, exist_ok=True)
+        req = os.path.join(JOBS, "ping.req")
+        res = os.path.join(JOBS, "ping.res")
+        try:
+            if os.path.exists(res):
+                os.remove(res)
+        except OSError:
+            pass
+        with open(req, "w") as f:
+            f.write("ping\n")
+    except OSError:
+        return True  # cannot test; keep previous verdict
+    deadline = time.time() + 1.5
+    while time.time() < deadline:
+        if not os.path.exists(req):
+            ok = not os.path.exists(res)
+            try:
+                if os.path.exists(res):
+                    os.remove(res)
+            except OSError:
+                pass
+            return ok
+        time.sleep(0.05)
+    try:
+        os.remove(req)
+        if os.path.exists(res):
+            os.remove(res)
+    except OSError:
+        pass
+    return False
+
+
+def _worker_alive():
+    pid = _read_worker_pid()
+    if not bool(pid) or not _pid_alive(pid) or not _pid_is_image(
+            pid, _PYTHON_IMAGES):
+        return False
+    return _worker_ping_ok()
 
 
 def _winws_processes():
@@ -564,14 +767,153 @@ def _clear_pid():
             pass
 
 
-def _running():
+def _running(deep=True):
+    # deep=False skips the PowerShell winws scan (a 1-2s powershell.exe
+    # spawn); it is only needed to adopt an orphaned winws started outside
+    # the worker. The tracked PID file covers the normal lifecycle.
     pid = _tracked_pid()
-    if pid and _pid_alive(pid):
+    if pid and _pid_alive(pid) and _pid_is_image(pid, ("winws.exe",)):
         return pid
+    if not deep:
+        return None
     ours = _find_our_winws()
     if ours:
         return ours[0][0]
     return None
+
+
+def _write_status_file():
+    """Snapshot for the GUI: reading a small file is free, while the old
+    `nukera.py status` poll spawned pythonw + tasklist + powershell every
+    couple of seconds (cursor flicker, blinking python in Task Manager)."""
+    pid = _running(deep=False)
+    try:
+        os.makedirs(STATE, exist_ok=True)
+        tmp = STATUS_FILE + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(json.dumps({
+                "running": bool(pid),
+                "pid": pid or 0,
+                "strategy": _current_strategy(),
+                "tgproxy": _tgproxy_alive(),
+                "ts": time.time(),
+            }))
+        os.replace(tmp, STATUS_FILE)
+    except OSError:
+        pass
+
+
+def _read_status_snapshot(max_age=6.0):
+    """Returns the worker's fresh status snapshot, or None if the file is
+    missing/stale (worker not running or an older CLI build)."""
+    try:
+        with open(STATUS_FILE, "r", encoding="utf-8") as f:
+            st = json.load(f)
+        if time.time() - float(st.get("ts", 0)) > max_age:
+            return None
+        return st
+    except (OSError, ValueError, TypeError):
+        return None
+
+
+def _load_routing():
+    try:
+        with open(ROUTING_FILE, "r", encoding="utf-8") as f:
+            r = json.load(f)
+        if isinstance(r, dict):
+            return r
+    except (OSError, ValueError):
+        pass
+    return None
+
+
+def _clean_domain_list(items):
+    out = []
+    for d in items or []:
+        d = str(d).strip().lower()
+        if d and not d.startswith("#") and d not in out:
+            out.append(d)
+    return out
+
+
+def _write_domain_list(path, domains, placeholder):
+    # winws treats an empty hostlist file as an error; keep one placeholder
+    # domain so a blank GUI config never breaks the launch.
+    with open(path, "w", encoding="utf-8") as f:
+        if domains:
+            f.write("\n".join(domains) + "\n")
+        else:
+            f.write(placeholder + "\n")
+
+
+def _apply_routing_lists():
+    """GUI-driven routing (state\\routing.json): rebuild the user hostlist
+    and the user exclude list, so in the 'custom' mode winws desyncs only
+    the chosen sites. A missing routing.json keeps the stock behavior —
+    the files are left exactly as they are."""
+    routing = _load_routing()
+    if routing is None:
+        return
+    if routing.get("mode") == "custom":
+        domains = _clean_domain_list(_routing_domains(routing))
+    else:
+        domains = _clean_domain_list(routing.get("custom_domains"))
+    _write_domain_list(USER_LIST, domains,
+                       "# Never leave this file empty\ndomain.example.abc")
+    _write_domain_list(EXCLUDE_USER_LIST, _clean_domain_list(
+        routing.get("excludes")), "domain.example.abc")
+
+
+def _routing_domains(routing):
+    domains = set()
+    cats = routing.get("categories") or {}
+    for key, enabled in cats.items():
+        if enabled and key in ROUTING_CATEGORY_DOMAINS:
+            domains.update(ROUTING_CATEGORY_DOMAINS[key])
+    domains.update(_clean_domain_list(routing.get("custom_domains")))
+    return sorted(domains)
+
+
+def _routing_filter_args(args, strategy_name=None):
+    # In 'custom' mode only the user hostlist routes traffic. Profiles that
+    # reference ONLY a stock list (e.g. the google profile) must be dropped
+    # whole: cutting just the --hostlist= would leave a hostless profile
+    # that catches all traffic on its ports. Profiles carrying the user
+    # list keep it (stock entries are stripped). Excludes, ipset profiles
+    # and inline --hostlist-domains stay untouched.
+    # Generated hybrid strategies do their own scoping via hybrid-*.txt
+    # lists, so routing filtering would only break them.
+    if strategy_name and strategy_name.startswith("Hybrid"):
+        return args
+    routing = _load_routing()
+    if not routing or routing.get("mode") != "custom":
+        return args
+
+    def is_stock_hostlist(a):
+        return a.startswith("--hostlist=") \
+            and "list-general-user.txt" not in a
+
+    profiles, cur = [], []
+    for a in args:
+        if a == "--new":
+            profiles.append(cur)
+            cur = []
+        else:
+            cur.append(a)
+    profiles.append(cur)
+    out = []
+    for prof in profiles:
+        if any(is_stock_hostlist(a) for a in prof) \
+                and not any(a.startswith("--hostlist=")
+                            and "list-general-user.txt" in a
+                            for a in prof):
+            continue
+        out.extend(a for a in prof if not is_stock_hostlist(a))
+        if prof:
+            out.append("--new")
+    while out and out[-1] == "--new":
+        out.pop()
+    return out
 
 
 def _setup_user_lists():
@@ -660,6 +1002,33 @@ def _strategy_args(name):
     full = full.replace("%BIN%", BIN + os.sep).replace("%LISTS%", LISTS + os.sep)
     full = full.replace("%GameFilterTCP%", "12").replace("%GameFilterUDP%", "12")
     return _split_args(full)
+
+
+def _strategy_args_raw(name):
+    # Same as _strategy_args but keeps %BIN%/%LISTS%/%GameFilter% tokens so a
+    # generated strategy file stays portable across machines.
+    parts = _extract_launch_parts(_strategy_path(name))
+    return _split_args(" ".join(parts))
+
+
+def _split_profiles(args):
+    """Split a winws arg list into (global_args, profiles).
+    Global args are the leading run of --wf-* tokens; profiles are the
+    --new-separated blocks that follow."""
+    i = 0
+    while i < len(args) and args[i].startswith("--wf-"):
+        i += 1
+    glob, rest = args[:i], args[i:]
+    profiles, cur = [], []
+    for a in rest:
+        if a == "--new":
+            profiles.append(cur)
+            cur = []
+        else:
+            cur.append(a)
+    if cur:
+        profiles.append(cur)
+    return glob, [p for p in profiles if p]
 
 
 def _current_strategy():
@@ -837,13 +1206,15 @@ def _wait_winws_ready(pid, since, timeout=4.0):
     return _pid_alive(pid)
 
 
-def _spawn_winws(name=None):
+def _spawn_winws(name=None, apply_routing=True):
     if not name:
         name = _current_strategy()
     try:
         args = _strategy_args(name)
     except Exception:
         args = _alt11_args()
+    if apply_routing:
+        args = _routing_filter_args(args, name)
     since = _log_tell()
     with open(LOG_FILE, "ab") as logf:
         p = subprocess.Popen(
@@ -1035,6 +1406,7 @@ def _restart_bypass(name, was_running):
 
 def cmd_adapt():
     _setup_user_lists()
+    _apply_routing_lists()
     _restore_full_ipset()
     _enable_timestamps()
     if _zapret_service_running():
@@ -1054,6 +1426,21 @@ def cmd_adapt():
     _adapt_begin()
     print("Adapt: testing %d strategies (takes a couple of minutes;" % len(strategies))
     print("  send 'nukera stop' or press Ctrl+C to cancel)...")
+    # if a hybrid is configured, the base choice must also be judged on the
+    # override sites, otherwise Adapt is blind to exactly the sites the
+    # hybrid exists for
+    probes = list(PROBE_HOSTS)
+    extra_sites = []
+    spec0 = _read_hybrid_spec()
+    if spec0:
+        for ov in spec0.get("overrides") or []:
+            for s in _clean_domain_list(ov.get("sites")):
+                if s not in extra_sites and len(extra_sites) < 8:
+                    extra_sites.append(s)
+        if extra_sites:
+            probes += [("S%d" % (i + 1), s, "/")
+                       for i, s in enumerate(extra_sites)]
+            print("Also probing override sites: %s" % ", ".join(extra_sites))
     results = {}
     tested = 0
     failed_start = 0
@@ -1085,7 +1472,8 @@ def cmd_adapt():
                 print("[%d/%d] %s: failed to start" % (i, len(strategies), name))
                 failed_start += 1
                 continue
-            r = _test_strategy(cancel_check=_adapt_cancel_requested)
+            r = _test_strategy(probes=probes,
+                               cancel_check=_adapt_cancel_requested)
             if cancelled or _adapt_cancel_requested():
                 cancelled = True
                 break
@@ -1094,7 +1482,7 @@ def cmd_adapt():
             results[name] = r
             print("[%d/%d] %s: score %d/%d, ping %d/%d" % (
                 i, len(strategies), name, r["ok"], r["total"], r["ping_ok"], len(PING_HOSTS)))
-            if r["ok"] == PERFECT_SCORE:
+            if r["ok"] == r["total"]:
                 perfect = True
                 print("Perfect score - no further testing needed.")
                 break
@@ -1109,14 +1497,20 @@ def cmd_adapt():
     print("\nStrategy results:\n")
     header = "%-34s %-4s %-4s %-4s %-4s %-4s %-4s  ping  score" % (
         "Strategy", "D-H", "D-12", "D-13", "Y-H", "Y-12", "Y-13")
+    if extra_sites:
+        header += "   sites"
     print(header)
     print("-" * len(header))
     rows = sorted(results.items(), key=lambda kv: (kv[1]["ok"], kv[1]["ping_ok"]), reverse=True)
     for name, r in rows:
-        labels = [TOKEN_LABEL[c] for c in r["cells"]]
-        print("%-34s %-4s %-4s %-4s %-4s %-4s %-4s  %d/%d  %d" % (
+        labels = [TOKEN_LABEL[c] for c in r["cells"][:6]]
+        line = "%-34s %-4s %-4s %-4s %-4s %-4s %-4s  %d/%d  %d" % (
             name, labels[0], labels[1], labels[2], labels[3], labels[4], labels[5],
-            r["ping_ok"], len(PING_HOSTS), r["ok"]))
+            r["ping_ok"], len(PING_HOSTS), r["ok"])
+        if extra_sites:
+            e_ok = sum(1 for c in r["cells"][6:] if c == "ok")
+            line += "  %d/%d" % (e_ok, max(len(r["cells"]) - 6, 0))
+        print(line)
     if not rows:
         print("No strategy could be tested (all failed to start).")
         print("Keeping %s." % prev)
@@ -1141,8 +1535,577 @@ def cmd_adapt():
         else:
             chosen = prev
             print("\nNo strategy passed a probe. Keeping the current default: %s" % prev)
+    spec = _read_hybrid_spec()
+    if spec:
+        # keep the hybrid configuration: only its base is refreshed with the
+        # freshly selected strategy; override groups stay untouched
+        spec["base"] = chosen
+        spec["base_strategy"] = chosen
+        try:
+            with open(HYBRID_FILE, "w", encoding="utf-8") as f:
+                json.dump(spec, f, ensure_ascii=False, indent=2)
+        except OSError:
+            pass
+        print("Hybrid config detected: rebuilding with new base %s" % chosen)
+        cmd_hybrid_build(apply_and_start=was_running)
+        return 0
     _restart_bypass(chosen, was_running)
     print("\nSaved choice: %s (used by 'nukera start')." % chosen)
+    return 0
+
+
+def _read_adapt_sites():
+    try:
+        with open(ADAPT_SITES_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, dict):
+            sites = _clean_domain_list(data.get("sites"))
+            if sites:
+                return sites
+    except (OSError, ValueError):
+        pass
+    return None
+
+
+def _probe_site(host, timeout=ADAPT_PROBE_TIMEOUT):
+    # Single HTTPS probe with default TLS: enough to tell whether the
+    # strategy carries the site through the DPI or not.
+    try:
+        conn = http.client.HTTPSConnection(host, timeout=timeout)
+        try:
+            conn.request("HEAD", "/")
+            conn.getresponse().read()
+        finally:
+            conn.close()
+        return "ok"
+    except Exception as e:
+        msg = str(e).lower()
+        if "certificate" in msg or "verify" in msg:
+            return "ssl"
+        if isinstance(e, socket.timeout) or "timed out" in msg:
+            return "timeout"
+        return "err"
+
+
+def _test_sites(sites, cancel_check=None, attempts=2):
+    # DPI verdicts are probabilistic: a strategy that passes a site once may
+    # fail the next second. A site counts only if every attempt succeeded,
+    # so per-site winners are stable enough to build a hybrid on.
+    attempts = max(int(attempts), 1)
+    ex = ThreadPoolExecutor(max_workers=min(len(sites) * attempts, 16) or 1)
+    jobs = [(s, rep) for rep in range(attempts) for s in sites]
+    futs = {ex.submit(_probe_site, s): (s, rep) for s, rep in jobs}
+    ok_count = {s: 0 for s in sites}
+    last_token = {s: "timeout" for s in sites}
+    pending = set(futs)
+    try:
+        while pending:
+            done, pending = wait(pending, timeout=0.2,
+                                 return_when=FIRST_COMPLETED)
+            for f in done:
+                s, rep = futs[f]
+                token = f.result()
+                last_token[s] = token
+                if token == "ok":
+                    ok_count[s] += 1
+            if cancel_check and cancel_check():
+                break
+    finally:
+        ex.shutdown(wait=False, cancel_futures=True)
+    cells = ["ok" if ok_count[s] * 2 >= attempts else last_token[s]
+             for s in sites]
+    ok = sum(1 for c in cells if c == "ok")
+    return {"cells": cells, "ok": ok, "total": len(cells),
+            "counts": dict(ok_count), "attempts": attempts}
+
+
+def cmd_adapt_sites():
+    sites = _read_adapt_sites()
+    if not sites:
+        sys.stderr.write("No sites to test. Set them in the GUI first.\n")
+        return 1
+    _setup_user_lists()
+    # The probed sites must be in the active hostlist, otherwise winws
+    # never touches their traffic. Merge them into the routing config
+    # (and keep them there: the user asked for these sites to work).
+    routing = _load_routing() or {}
+    routing["custom_domains"] = _clean_domain_list(
+        list(routing.get("custom_domains") or []) + sites)
+    routing.setdefault("mode", "all")
+    routing.setdefault("categories", {})
+    try:
+        with open(ROUTING_FILE, "w", encoding="utf-8") as f:
+            json.dump(routing, f, ensure_ascii=False, indent=2)
+    except OSError:
+        pass
+    _apply_routing_lists()
+    _restore_full_ipset()
+    _enable_timestamps()
+    if _zapret_service_running():
+        sys.stderr.write(
+            "A 'zapret' Windows service is running. Stop/remove it first"
+            " (engine\\service.bat -> Remove Services), then run again.\n"
+        )
+        return 1
+    strategies = _list_strategies()
+    if not strategies:
+        sys.stderr.write("no strategy files found in engine/strategies\n")
+        return 1
+    prev = _current_strategy()
+    was_running = _running()
+    if _stop_running():
+        print("Stopped the running bypass to test strategies.")
+    _adapt_begin()
+    shown = ", ".join(sites[:5]) + ("..." if len(sites) > 5 else "")
+    print("AdaptSites: testing %d strategies for %d sites (%s)" % (
+        len(strategies), len(sites), shown))
+    print("ADAPTSITES_PREV=%s" % prev)
+    results = {}
+    tested = 0
+    failed_start = 0
+    cancelled = False
+    best_name = None
+    best_score = -1
+    try:
+        cur_pid = None
+        for i, name in enumerate(strategies, 1):
+            if _adapt_cancel_requested():
+                cancelled = True
+                break
+            if cur_pid:
+                _kill(cur_pid)
+                cur_pid = None
+            try:
+                _strategy_args(name)
+            except Exception as e:
+                print("[%d/%d] %s: skipped (%r)" % (
+                    i, len(strategies), name, e))
+                failed_start += 1
+                continue
+            # raw spawn: no routing filtering, so every strategy shows its
+            # true capability; the probe sites are in the user list already.
+            pid, since = _spawn_winws(name, apply_routing=False)
+            if pid:
+                cur_pid = pid
+            if not pid or not _wait_winws_ready(pid, since, 3.0):
+                print("[%d/%d] %s: failed to start" % (
+                    i, len(strategies), name))
+                failed_start += 1
+                continue
+            r = _test_sites(sites, cancel_check=_adapt_cancel_requested)
+            if cancelled or _adapt_cancel_requested():
+                cancelled = True
+                break
+            tested += 1
+            results[name] = r
+            print("[%d/%d] %s: score %d/%d" % (
+                i, len(strategies), name, r["ok"], r["total"]))
+            if r["ok"] > best_score:
+                best_name, best_score = name, r["ok"]
+            if r["ok"] == r["total"]:
+                print("Perfect score - no further testing needed.")
+                break
+    finally:
+        _stop_running()
+        _adapt_end()
+    print("")
+    if not cancelled:
+        # per-site winners: strategy with the highest success rate
+        site_best = {}
+        for j, site in enumerate(sites):
+            best_name, best_cnt = None, 0
+            for name, r in results.items():
+                cnt = r.get("counts", {}).get(site, 0)
+                if cnt > best_cnt:
+                    best_name, best_cnt = name, cnt
+            if best_name:
+                site_best[site] = best_name
+        for site, name in site_best.items():
+            print("ADAPTSITES_PER_SITE=%s=%s" % (site, name))
+    if cancelled:
+        print("AdaptSites INTERRUPTED. Results NOT applied; keeping %s." % prev)
+        _restart_bypass(prev, was_running)
+        return 0
+    if not results:
+        print("No strategy could be tested (all failed to start).")
+        print("Keeping %s." % prev)
+        _restart_bypass(prev, was_running)
+        return 1
+    print("\nStrategy results for the site list:\n")
+    header = "%-34s %s" % ("Strategy", "score")
+    print(header)
+    print("-" * len(header))
+    rows = sorted(results.items(), key=lambda kv: kv[1]["ok"], reverse=True)
+    for name, r in rows:
+        print("%-34s %d/%d" % (name, r["ok"], r["total"]))
+    if best_score > 0:
+        _save_strategy(best_name)
+        print("\nADAPTSITES_BEST=%s" % best_name)
+        _restart_bypass(best_name, was_running)
+        print("\nSaved choice: %s (used by 'nukera start')." % best_name)
+        return 0
+    print("\nNo strategy passed any probe. Keeping %s." % prev)
+    _restart_bypass(prev, was_running)
+    return 1
+
+
+def _read_hybrid_spec():
+    try:
+        with open(HYBRID_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, dict) and data.get("base"):
+            return data
+    except (OSError, ValueError):
+        pass
+    return None
+
+
+def _hybrid_q(token):
+    # Re-quote tokens carrying %BIN%/%LISTS% values, matching the author's
+    # strategy files: --hostlist="%LISTS%file.txt"
+    if "%BIN%" in token or "%LISTS%" in token:
+        key, _, val = token.partition("=")
+        if val.startswith('"') and val.endswith('"'):
+            return token
+        return '%s="%s"' % (key, val)
+    return token
+
+
+def _hybrid_profile(profile, group_list_token, is_base, overrides_token):
+    out = []
+    hostlist_pos = None
+    for a in profile:
+        if not is_base and a.startswith("--hostlist=") \
+                and "hybrid_" not in a:
+            if hostlist_pos is None:
+                hostlist_pos = len(out)
+            continue
+        out.append(a)
+    if is_base:
+        # keep base away from override-group traffic
+        if overrides_token:
+            last_hl = max((i for i, a in enumerate(out)
+                           if a.startswith("--hostlist")), default=None)
+            out.insert((last_hl + 1) if last_hl is not None else len(out),
+                       '--hostlist-exclude=%s' % overrides_token)
+    else:
+        gl = _hybrid_q("--hostlist=%s" % group_list_token)
+        if hostlist_pos is None:
+            # no stock hostlist in this profile: scope it anyway, otherwise
+            # it would catch traffic outside the group
+            first_real = 0
+            for i, a in enumerate(out):
+                if a.startswith(("--filter-tcp", "--filter-udp",
+                                 "--filter-l7", "--ipset-exclude",
+                                 "--hostlist")):
+                    first_real = i + 1
+            out.insert(first_real, gl)
+        else:
+            out.insert(hostlist_pos, gl)
+    return out
+
+
+def cmd_hybrid_build(apply_and_start=True):
+    spec = _read_hybrid_spec()
+    if not spec:
+        sys.stderr.write("No hybrid spec. Run the site selection first.\n")
+        return 1
+    base = spec.get("base")
+    overrides = spec.get("overrides") or []
+    if base and base.startswith("Hybrid"):
+        # nesting hybrids is not supported: fall back to the stored base
+        base = spec.get("base_strategy") or DEFAULT_STRATEGY
+    if not base or not os.path.exists(_strategy_path(base)):
+        sys.stderr.write("Base strategy not found: %r\n" % base)
+        return 1
+    groups = []
+    for ov in overrides:
+        sites = _clean_domain_list(ov.get("sites"))
+        strat = ov.get("strategy")
+        if not sites or not strat or strat == base:
+            continue
+        if not os.path.exists(_strategy_path(strat)):
+            print("Skipping override with missing strategy: %r" % strat)
+            continue
+        groups.append({"sites": sites, "strategy": strat})
+    if not groups:
+        # nothing to merge: base alone is the right choice
+        _save_strategy(base)
+        _restart_bypass(base, _running())
+        print("HYBRID=%s" % base)
+        print("No overrides needed; base strategy applied: %s" % base)
+        return 0
+
+    was_running = _running()
+    if was_running:
+        # the old .bat cannot be replaced while winws holds it
+        _stop_running()
+
+    # clean previous generated files (retry: AV may hold a fresh bat briefly)
+    for f in os.listdir(STRATEGIES):
+        if f.startswith("Hybrid (") and f.lower().endswith(".bat"):
+            for _ in range(6):
+                try:
+                    os.remove(os.path.join(STRATEGIES, f))
+                    break
+                except OSError:
+                    time.sleep(0.3)
+    for f in os.listdir(LISTS):
+        if f.startswith("hybrid_") and f.endswith(".txt"):
+            try:
+                os.remove(os.path.join(LISTS, f))
+            except OSError:
+                pass
+
+    try:
+        base_raw = _strategy_args_raw(base)
+        glob, base_profiles = _split_profiles(base_raw)
+    except Exception as e:
+        sys.stderr.write("Failed to parse base strategy: %r\n" % e)
+        return 1
+
+    group_lists = []
+    merged_profiles = []
+    for gi, g in enumerate(groups, 1):
+        list_file = "hybrid_%d.txt" % gi
+        _write_domain_list(os.path.join(LISTS, list_file), g["sites"],
+                           "# hybrid group %d" % gi)
+        group_lists.append(list_file)
+        try:
+            _, ov_profiles = _split_profiles(_strategy_args_raw(g["strategy"]))
+        except Exception as e:
+            print("Skipping group %d (strategy parse failed: %r)" % (gi, e))
+            continue
+        gl_token = "%%LISTS%%%s" % list_file
+        for prof in ov_profiles:
+            merged_profiles.append(
+                _hybrid_profile(prof, gl_token, False, None))
+
+    if not merged_profiles:
+        sys.stderr.write("No override profiles could be built.\n")
+        return 1
+    all_override_domains = sorted(
+        {d for g in groups for d in g["sites"]})
+    _write_domain_list(os.path.join(LISTS, "hybrid_overrides.txt"),
+                       all_override_domains, "# hybrid overrides")
+    base_profiles = [
+        _hybrid_profile(p, None, True, "%LISTS%hybrid_overrides.txt")
+        for p in base_profiles
+    ]
+
+    # sanity: warn when an override strategy uses different wf filters
+    try:
+        ov_glob0, _ = _split_profiles(
+            _strategy_args_raw(groups[0]["strategy"]))
+        if ov_glob0 and ov_glob0 != glob:
+            print("Note: wf filters differ between base and overrides;"
+                  " using the base ones.")
+    except Exception:
+        pass
+
+    name = "Hybrid (%s +%d)" % (base, len(merged_profiles))
+    lines = [
+        "@echo off",
+        "chcp 65001 > nul",
+        ":: generated by Nukera hybrid builder (base: %s; groups: %s)"
+        % (base, "; ".join("%s=%s" % (",".join(g["sites"][:3]),
+                                      g["strategy"]) for g in groups)),
+        "",
+        'cd /d "%~dp0"',
+        "call service.bat status_zapret",
+        "call service.bat check_updates",
+        "call service.bat load_game_filter",
+        "call service.bat load_user_lists",
+        "echo:",
+        "",
+        'set "BIN=%~dp0bin\\"',
+        'set "LISTS=%~dp0lists\\"',
+        "cd /d %BIN%",
+        "",
+    ]
+    first = ['start "zapret: %~n0" /min "%BIN%winws.exe"'] + glob
+    # override profiles go FIRST: they are SNI-scoped and must win over the
+    # base's broad profiles (ipset catch-alls etc.); the base sees the rest.
+    body = merged_profiles + base_profiles
+    for i, prof in enumerate(body):
+        line = " ".join(_hybrid_q(a) for a in prof)
+        if i < len(body) - 1:
+            line = line + " --new ^"
+        if i == 0:
+            lines.append(" ".join(first) + " " + line)
+        else:
+            lines.append(line)
+    bat_path = _strategy_path(name)
+    for _ in range(6):
+        try:
+            with open(bat_path, "w", encoding="utf-8") as f:
+                f.write("\r\n".join(lines) + "\r\n")
+            break
+        except OSError:
+            time.sleep(0.3)
+    else:
+        sys.stderr.write("Could not write %s (file locked)\n" % bat_path)
+        return 1
+
+    # round-trip check: the generated file must parse back cleanly
+    try:
+        _strategy_args(name)
+    except Exception as e:
+        os.remove(bat_path)
+        sys.stderr.write("Generated strategy failed to parse: %r\n" % e)
+        return 1
+
+    _save_strategy(name)
+    if apply_and_start:
+        was_running = _running()
+        if was_running:
+            _stop_running()
+        _setup_user_lists()
+        _apply_routing_lists()
+        _enable_timestamps()
+        pid, since = _spawn_winws(name, apply_routing=False)
+        if pid and _wait_winws_ready(pid, since, 4.0):
+            _write_pid(pid)
+            print("Bypass restarted with %s (PID %s)." % (name, pid))
+        else:
+            print("Generated strategy failed to start; keeping it selected.")
+    print("HYBRID=%s" % name)
+    return 0
+
+
+def cmd_probe_site(arg):
+    host = (arg or "").strip().lower()
+    if not host or "/" in host or " " in host:
+        print("PROBE=err")
+        return 1
+    print("PROBE=%s" % _probe_site(host, timeout=5.0))
+    return 0
+
+
+def cmd_hybrid_check():
+    """Health check of the active hybrid: probe every override site, then
+    re-run the strategy selection ONLY for the sites that fail, update the
+    spec and rebuild the hybrid."""
+    spec = _read_hybrid_spec()
+    if not spec:
+        sys.stderr.write("No hybrid spec (state\\hybrid.json).\n")
+        return 1
+    sites = []
+    for ov in spec.get("overrides") or []:
+        for s in _clean_domain_list(ov.get("sites")):
+            if s not in sites:
+                sites.append(s)
+    if not sites:
+        print("HYBRIDCHECK=ok")
+        print("No override sites configured.")
+        return 0
+    was_running = _running()
+    if was_running:
+        res = _test_sites(sites)
+        counts = res["counts"]
+        att = res["attempts"]
+        # rate-based: a site fails when it succeeds in fewer than half the
+        # attempts (DPI verdicts are probabilistic)
+        failing = [s for s in sites
+                   if counts.get(s, 0) * 2 < att]
+        for s in sites:
+            print("HYBRIDCHECK_SITE=%s=%d/%d" % (s, counts.get(s, 0), att))
+        if not failing:
+            print("HYBRIDCHECK=ok")
+            print("All %d override sites are reachable." % len(sites))
+            return 0
+        print("HYBRIDCHECK_FAILING=%s" % ",".join(failing))
+    else:
+        print("Bypass is not running; re-testing all %d sites." % len(sites))
+        failing = list(sites)
+    print("Re-testing %d failing site(s) across all strategies..." % len(failing))
+    if was_running:
+        # only one winws can hold WinDivert; stop the bypass for the test
+        _stop_running()
+
+    strategies = _list_strategies()
+    if not strategies:
+        sys.stderr.write("no strategy files found in engine/strategies\n")
+        return 1
+    prev = _current_strategy()
+    _adapt_begin()
+    results = {}
+    cancelled = False
+    try:
+        cur_pid = None
+        for i, name in enumerate(strategies, 1):
+            if _adapt_cancel_requested():
+                cancelled = True
+                break
+            if cur_pid:
+                _kill(cur_pid)
+                cur_pid = None
+            try:
+                _strategy_args(name)
+            except Exception:
+                continue
+            pid, since = _spawn_winws(name, apply_routing=False)
+            if pid:
+                cur_pid = pid
+            if not pid or not _wait_winws_ready(pid, since, 3.0):
+                print("[%d/%d] %s: failed to start" % (
+                    i, len(strategies), name))
+                continue
+            r = _test_sites(failing, cancel_check=_adapt_cancel_requested)
+            results[name] = r
+            print("[%d/%d] %s: score %d/%d" % (
+                i, len(strategies), name, r["ok"], r["total"]))
+            if r["ok"] == r["total"]:
+                print("Perfect score - no further testing needed.")
+                break
+    finally:
+        _stop_running()
+        _adapt_end()
+    if cancelled:
+        print("HYBRIDCHECK=cancelled")
+        _restart_bypass(prev, True)
+        return 130
+    winners = {}
+    for j, site in enumerate(failing):
+        best_name, best_cnt = None, 0
+        for name, r in results.items():
+            cnt = r.get("counts", {}).get(site, 0)
+            if cnt > best_cnt:
+                best_name, best_cnt = name, cnt
+        if best_name:
+            winners[site] = best_name
+    base = spec.get("base_strategy") or spec.get("base") or DEFAULT_STRATEGY
+    if base.startswith("Hybrid"):
+        base = DEFAULT_STRATEGY
+    groups = {}
+    for ov in spec.get("overrides") or []:
+        strat = ov.get("strategy")
+        for s in _clean_domain_list(ov.get("sites")):
+            groups.setdefault(strat, set()).add(s)
+    nofix = []
+    for site, strat in winners.items():
+        for g in groups.values():
+            g.discard(site)
+        if strat == base:
+            continue  # the base covers this site now
+        groups.setdefault(strat, set()).add(site)
+    for site in failing:
+        if site not in winners:
+            nofix.append(site)  # keep as is; nothing passed
+    spec["base"] = base
+    spec["base_strategy"] = base
+    spec["overrides"] = [{"sites": sorted(s), "strategy": k}
+                         for k, s in groups.items() if s]
+    try:
+        with open(HYBRID_FILE, "w", encoding="utf-8") as f:
+            json.dump(spec, f, ensure_ascii=False, indent=2)
+    except OSError:
+        pass
+    if nofix:
+        print("HYBRIDCHECK_NOFIX=%s" % ",".join(nofix))
+    print("Rebuilding hybrid with updated overrides...")
+    cmd_hybrid_build(apply_and_start=was_running)
+    print("HYBRIDCHECK_DONE")
     return 0
 
 
@@ -1165,7 +2128,21 @@ def _launch_worker():
 
 def _ensure_worker():
     if _worker_alive():
-        return True
+        if _worker_is_current():
+            return True
+        # resident worker predates the last cli update: restart it so the
+        # new code (commands, fixes) takes effect
+        try:
+            with open(os.path.join(JOBS, "shutdown.req"), "w") as f:
+                f.write("shutdown\n")
+        except OSError:
+            return True  # cannot signal; keep the old worker
+        deadline = time.time() + 15
+        req = os.path.join(JOBS, "shutdown.req")
+        while time.time() < deadline and os.path.exists(req):
+            time.sleep(0.25)
+        _remove_quiet(WORKER_PID)
+        _remove_quiet(WORKER_VER)
     if os.path.exists(WORKER_PID):
         try:
             os.remove(WORKER_PID)
@@ -1249,7 +2226,21 @@ def _worker_process_one(req_path):
             cmd = f.read().strip()
     except OSError:
         return
+    if cmd == "ping":
+        # liveness probe from _worker_alive(): just delete the request
+        try:
+            os.remove(req_path)
+        except OSError:
+            pass
+        return
     if cmd == "shutdown":
+        # Updates/cleanups send shutdown while the bypass may be running;
+        # stop winws and the proxy first, otherwise their locked DLLs
+        # (cygwin1.dll, WinDivert) block replacing engine files.
+        try:
+            cmd_stop()
+        except Exception:
+            pass
         with open(res_path, "w", encoding="utf-8") as res:
             res.write("worker stopped\n")
         with open(code_path, "w") as f:
@@ -1308,6 +2299,13 @@ def cmd_worker():
     _remove_quiet(ADAPT_CANCEL)
     _remove_quiet(ADAPT_JOB)
     _write_worker_pid(os.getpid())
+    try:
+        with open(WORKER_VER, "w") as f:
+            f.write(_cli_hash() + "\n")
+    except OSError:
+        pass
+    _write_status_file()
+    last_status = time.time()
     while True:
         try:
             items = os.listdir(JOBS)
@@ -1325,11 +2323,36 @@ def cmd_worker():
                 return 0
             except Exception:
                 pass
+        now = time.time()
+        if now - last_status >= 1.0:
+            _write_status_file()
+            last_status = now
         time.sleep(0.25)
+
+
+def _ensure_hybrid_restored():
+    """An update replaces engine\\ and removes generated hybrid files, but
+    state\\hybrid.json (the spec) survives. If the selected strategy is a
+    hybrid that no longer exists, rebuild it before starting the bypass."""
+    if not os.path.exists(HYBRID_FILE):
+        return
+    try:
+        with open(STRATEGY_FILE) as f:
+            sel = f.read().strip()
+    except OSError:
+        return
+    # note: _current_strategy() silently falls back to the default when the
+    # file is gone, which would mask the problem — read strategy.txt raw
+    if not sel.startswith("Hybrid") or os.path.exists(_strategy_path(sel)):
+        return
+    print("Hybrid strategy is missing (update?) - rebuilding from spec...")
+    cmd_hybrid_build(apply_and_start=False)
 
 
 def cmd_start():
     _setup_user_lists()
+    _apply_routing_lists()
+    _ensure_hybrid_restored()
     _enable_timestamps()
     if _zapret_service_running():
         sys.stderr.write(
@@ -1339,6 +2362,7 @@ def cmd_start():
         return 1
     if _running():
         print("already running")
+        _write_status_file()
         return 0
     _web_unblock_on()
     name = _current_strategy()
@@ -1353,6 +2377,7 @@ def cmd_start():
         _web_unblock_off()
         return 1
     _write_pid(pid)
+    _write_status_file()
     print("Nukera started (PID %s)." % pid)
     print("Strategy: %s" % name)
     try:
@@ -1367,6 +2392,7 @@ def cmd_stop():
     stopped = _stop_running()
     _web_unblock_off()
     _telegram_proxy_stop()
+    _write_status_file()
     if not stopped:
         print("not running")
         return 0
@@ -1375,8 +2401,26 @@ def cmd_stop():
 
 
 def cmd_status():
+    # Fast path: a fresh worker snapshot answers without spawning anything.
+    st = _read_status_snapshot()
+    if st is not None:
+        name = st.get("strategy") or _current_strategy()
+        if st.get("running"):
+            print("Status: running")
+            print("PID: %s" % (st.get("pid") or 0))
+            print("Strategy: %s" % name)
+        else:
+            print("Status: not running")
+            print("Strategy: %s" % name)
+        print("Telegram Desktop proxy: %s" % (
+            "enabled" if st.get("tgproxy") else "disabled"))
+        return 0
+    _write_status_file()
     name = _current_strategy()
-    pid = _running()
+    # deep=False: status is polled every couple of seconds by the GUI; the
+    # PowerShell orphan scan (1-2s) belongs to start/stop, which keep the
+    # deep search via _running()/_stop_running().
+    pid = _running(deep=False)
     if pid:
         print("Status: running")
         print("PID: %s" % pid)
@@ -1441,6 +2485,15 @@ def _execute(cmd):
         return cmd_status()
     if cmd == "adapt":
         return cmd_adapt()
+    if cmd == "adapt_sites":
+        return cmd_adapt_sites()
+    if cmd == "hybrid_build":
+        return cmd_hybrid_build()
+    if cmd == "hybrid_check":
+        return cmd_hybrid_check()
+    if cmd.startswith("probe_site"):
+        parts = cmd.split(None, 1)
+        return cmd_probe_site(parts[1] if len(parts) > 1 else "")
     if cmd == "menu":
         return cmd_menu()
     if cmd == "worker":
@@ -1454,7 +2507,7 @@ def _execute(cmd):
 
 def dispatch(cmd):
     cmd = cmd.lower()
-    if cmd == "adapt":
+    if cmd in ("adapt", "adapt_sites", "hybrid_build", "hybrid_check"):
         if _adapt_active():
             print("An adapt test is already running.")
             return 0
@@ -1465,7 +2518,7 @@ def dispatch(cmd):
             )
             return 1
         try:
-            return _call_worker("adapt", timeout=ADAPT_TIMEOUT)
+            return _call_worker(cmd, timeout=ADAPT_TIMEOUT)
         except KeyboardInterrupt:
             _request_adapt_cancel()
             _wait_adapt_finished()
@@ -1505,7 +2558,7 @@ def dispatch(cmd):
             secret = open(TGPROXY_SECRET, "r", encoding="utf-8").read().strip()
         except OSError:
             secret = ""
-        link = tgproxy.make_proxy_link(tgproxy.TGPROXY_PORT, secret)
+        link = _tg().make_proxy_link(_tg().TGPROXY_PORT, secret)
         print("Link: %s" % link)
         try:
             os.startfile(link)
@@ -1514,8 +2567,8 @@ def dispatch(cmd):
             print("Could not open Telegram automatically: %s" % e)
             print("Add the proxy manually in Telegram: Settings -> Advanced ->"
                   " Connection Type -> Use custom proxy -> MTProto Proxy.")
-            print("  Server: %s" % tgproxy.TGPROXY_HOST)
-            print("  Port: %s" % tgproxy.TGPROXY_PORT)
+            print("  Server: %s" % _tg().TGPROXY_HOST)
+            print("  Port: %s" % _tg().TGPROXY_PORT)
             print("  Secret: dd%s" % secret)
         return 0
     return _execute(cmd)
