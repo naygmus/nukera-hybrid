@@ -15,6 +15,33 @@ ETC_DIR="/etc/unblocker"
 HOSTLISTDIR="$ETC_DIR/hostlists"
 STRATEGYDIR="$ETC_DIR"
 
+# ─── Options (build/install-time variants) ──────────────────────────
+# --service-mode=systemd|sysvinit|runit|openrc|none|auto
+#     systemd  : system unit + systemctl enable (default on systemd distros)
+#     sysvinit : /etc/init.d script — Puppy Linux, antiX, Devuan, busybox
+#     runit    : /etc/sv run script (Void, Artix)
+#     openrc   : openrc-run script (Alpine, Artix-OpenRC)
+#     none     : no daemon management; start manually
+#     auto     : detect via scripts/detect-init.sh; ask interactively if unclear
+# --autostart=yes|no      enable at boot (default yes)
+# --puppy                 shortcut: sysvinit + no polkit + Puppy notes
+# --help
+SERVICE_MODE="${NUKERA_SERVICE_MODE:-auto}"
+AUTOSTART="yes"
+PUPPY_HINT="no"
+for arg in "$@"; do
+    case "$arg" in
+        --service-mode=*) SERVICE_MODE="${arg#--service-mode=}" ;;
+        --no-service)     SERVICE_MODE="none" ;;
+        --autostart=*)    AUTOSTART="${arg#--autostart=}" ;;
+        --puppy)          PUPPY_HINT="yes"; SERVICE_MODE="sysvinit" ;;
+        --help|-h)
+            sed -n '19,40p' "$0" | sed 's/^# \{0,1\}//'
+            exit 0 ;;
+        *) echo "unknown option: $arg (see --help)"; exit 1 ;;
+    esac
+done
+
 # We need root
 if [ "$(id -u)" -ne 0 ]; then
     echo "Run with sudo: sudo $0"
@@ -76,19 +103,76 @@ WEOF
 chmod 755 "$PREFIX/bin/unblocker-gui"
 echo "  Wrapper installed to $PREFIX/bin/unblocker-gui"
 
-# ─── 5. Kill script to PATH ─────────────────────────────────────────
+# ─── 5. Kill script + service tooling to PATH ───────────────────────
 install -m 0755 "$ROOT/scripts/unblocker-kill.sh" "$PREFIX/bin/unblocker-kill"
+install -m 0755 "$ROOT/scripts/detect-init.sh"    "$PREFIX/bin/nukera-detect-init"
+install -m 0755 "$ROOT/scripts/nukera-service.sh" "$PREFIX/bin/nukera-service"
+install -m 0755 "$ROOT/scripts/hybrid-build.sh"   "$PREFIX/bin/nukera-hybrid-build"
+echo "  Service tooling installed: nukera-service, nukera-hybrid-build, nukera-detect-init"
 
-# ─── 6. Polkit rules (passwordless systemctl, any active local user) ─
-install -d /etc/polkit-1/rules.d
-install -m 0644 "$ROOT/packaging/polkit/50-unblocker.rules" /etc/polkit-1/rules.d/50-unblocker.rules
-echo "  Polkit rules installed (no username pin — any active local user)"
+# ─── 6. Polkit rules (only where polkit exists; Puppy has none) ─────
+if [ "$PUPPY_HINT" = "yes" ]; then
+    echo "  Puppy mode: polkit rules skipped (no polkit on Puppy)"
+elif [ -d /etc/polkit-1 ]; then
+    install -d /etc/polkit-1/rules.d
+    install -m 0644 "$ROOT/packaging/polkit/50-unblocker.rules" /etc/polkit-1/rules.d/50-unblocker.rules
+    echo "  Polkit rules installed (no username pin — any active local user)"
+else
+    echo "  ⚠ /etc/polkit-1 not found — polkit rules skipped (non-desktop system?)"
+fi
 
-# ─── 7. Systemd service ─────────────────────────────────────────────
-install -m 0644 "$ROOT/packaging/systemd/unblocker.service" /etc/systemd/system/unblocker.service
-systemctl daemon-reload
-systemctl enable unblocker.service
-echo "  Systemd service installed and enabled"
+# ─── 7. Daemon service (init-system aware, install-time selectable) ─
+if [ "$SERVICE_MODE" = "auto" ]; then
+    SERVICE_MODE="$("$ROOT/scripts/detect-init.sh" --quiet)"
+    echo "  Detected init: $SERVICE_MODE"
+    if [ "$SERVICE_MODE" != "systemd" ] && [ -t 0 ]; then
+        echo
+        echo "  Choose how the bypass daemon should be managed:"
+        echo "    1) systemd service        (recommended on systemd distros)"
+        echo "    2) /etc/init.d script     (SysV / busybox init — Puppy, antiX)"
+        echo "    3) runit service          (Void, Artix-runit)"
+        echo "    4) OpenRC service         (Alpine, Artix-OpenRC)"
+        echo "    5) none — start manually  (nukera-service.sh start)"
+        printf "  Selection [1-5, default auto]: "
+        read -r answer
+        case "$answer" in
+            2) SERVICE_MODE="sysvinit" ;;
+            3) SERVICE_MODE="runit" ;;
+            4) SERVICE_MODE="openrc" ;;
+            5) SERVICE_MODE="none" ;;
+            *) : ;;
+        esac
+    fi
+fi
+case "$SERVICE_MODE" in
+    systemd)
+        install -m 0644 "$ROOT/packaging/systemd/unblocker.service" /etc/systemd/system/unblocker.service
+        systemctl daemon-reload
+        if [ "$AUTOSTART" = "yes" ]; then
+            systemctl enable unblocker.service
+            echo "  Systemd service installed and enabled"
+        else
+            echo "  Systemd service installed (autostart disabled)"
+        fi
+        ;;
+    sysvinit)
+        NUKERA_SERVICE_MODE="sysvinit" "$ROOT/scripts/nukera-service.sh" install
+        [ "$AUTOSTART" = "yes" ] && NUKERA_SERVICE_MODE="sysvinit" "$ROOT/scripts/nukera-service.sh" enable
+        ;;
+    runit)
+        NUKERA_SERVICE_MODE="runit" "$ROOT/scripts/nukera-service.sh" install
+        ;;
+    openrc)
+        NUKERA_SERVICE_MODE="openrc" "$ROOT/scripts/nukera-service.sh" install
+        ;;
+    none)
+        echo "  Service management skipped (mode: none)."
+        echo "  Start the daemon manually:  /usr/lib/nukera/unblocker daemon &"
+        ;;
+    *)
+        echo "  ⚠ unknown service mode '$SERVICE_MODE' — skipping daemon setup"
+        ;;
+esac
 
 # ─── 8. Config directories + strategy files ─────────────────────────
 install -d "$STRATEGYDIR/strategies/pool/byebyedpi" "$HOSTLISTDIR" "$STRATEGYDIR/sites"
@@ -124,14 +208,18 @@ echo "  Hostlists + static hosts installed"
 install -m 0644 "$ROOT/packaging/desktop/unblocker.desktop" /usr/share/applications/unblocker.desktop
 echo "  Desktop file installed"
 
-# ─── 11. Restart polkitd to pick up rules ───────────────────────────
-systemctl restart polkit 2>/dev/null || true
+# ─── 11. Restart polkitd to pick up rules (systemd distros only) ────
+if [ "$SERVICE_MODE" = "systemd" ] && command -v systemctl >/dev/null 2>&1; then
+    systemctl restart polkit 2>/dev/null || true
+fi
 
 echo
-echo "✓ Installed. Run 'unblocker-gui' or click from app launcher."
-echo "  Enable: click ▶ or 'unblocker enable'"
-echo "  Disable: click ■ or 'unblocker disable'"
+echo "✓ Installed (service mode: $SERVICE_MODE)."
+echo "  Run 'unblocker-gui' or click from app launcher."
+echo "  Enable: click ▶ or 'unblocker enable'" 
+echo "  Service control: 'nukera-service start|stop|restart|status'"
 echo "  Emergency: 'unblocker-kill'"
+echo "  Hybrid strategies: 'nukera-hybrid-build' (see script header)"
 echo "  No password prompts after install."
 echo
 echo "  Tip: run 'unblocker install-discover' once to pin working IPs for"
