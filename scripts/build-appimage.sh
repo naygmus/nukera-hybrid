@@ -34,6 +34,7 @@ else
         done
     fi
     command -v flutter >/dev/null 2>&1 || { echo "flutter not found — set PATH or install under ~/opt/flutter (or set NUKERA_GUI_BUNDLE)" >&2; exit 1; }
+    BUNDLE="unblocker_gui/build/linux/x64/release/bundle"
 fi
 
 # Static type2-runtime (no libfuse2 needed on the target). Cached to ~/.cache/nukera.
