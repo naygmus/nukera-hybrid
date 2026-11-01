@@ -109,6 +109,8 @@ async fn run_daemon(cfg: unblocker_core::config::AppConfig, _socks_arg: String) 
     // rule that would black-hole the user. This is the same invariant
     // the user demanded: the disable path must be a true no-op on the
     // network, so we never get into a "stale rule + no engine" state.
+    zapret::ensure_nfqueue_module();
+    zapret::kill_stale_engines();
     zapret::nft_flush_safely();
     // Also clean any leftover probe tables from install-discover.
     zapret::probe::nft_flush_probe_tables();
@@ -316,6 +318,9 @@ async fn run_daemon(cfg: unblocker_core::config::AppConfig, _socks_arg: String) 
     }
     // Then stop nfqws (so it's not processing the nft rule we delete underneath it).
     let _ = child.kill();
+    // Belt and braces: an engine spawned via pkexec (or left by an earlier
+    // crashed daemon) is not our direct child — kill any survivor by name.
+    zapret::kill_stale_engines();
     zapret::nft_remove().ok();
     zapret::nft_flush_safely();
     let _ = system::system_proxy_disable();
@@ -388,16 +393,58 @@ async fn run_hosts(cfg: unblocker_core::config::AppConfig) -> Result<()> {
 
 async fn run_enable(_cfg: unblocker_core::config::AppConfig) -> Result<()> {
     println!("Enabling bypass…");
-    let result = std::process::Command::new("systemctl")
-        .args(["start", "unblocker.service"])
-        .output()?;
-    if result.status.success() {
-        println!("✓ Enabled — nfqws NFQUEUE + nft + hosts applied");
-    } else {
+    // systemd path (Arch/Debian/Fedora): the daemon is a system service.
+    if std::path::Path::new("/run/systemd/system").exists() {
+        let result = std::process::Command::new("systemctl")
+            .args(["start", "unblocker.service"])
+            .output()?;
+        if result.status.success() {
+            println!("✓ Enabled — nfqws NFQUEUE + nft + hosts applied");
+            return Ok(());
+        }
         let err = String::from_utf8_lossy(&result.stderr);
         anyhow::bail!("enable failed: {err}");
     }
-    Ok(())
+    // Non-systemd (Puppy/busybox init, runit, OpenRC…): run the daemon
+    // directly in the background — it performs the same nfqws + nft +
+    // hosts enable and keeps itself alive.
+    if unsafe { libc::getuid() } != 0 {
+        anyhow::bail!(
+            "no systemd detected and not running as root — the daemon needs root: \
+             sudo unblocker enable"
+        );
+    }
+    println!("No systemd — starting the daemon directly…");
+    let exe = std::env::current_exe().context("resolve current exe")?;
+    let log = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open("/tmp/unblocker-daemon.log")
+        .context("open /tmp/unblocker-daemon.log")?;
+    let mut child = std::process::Command::new(exe)
+        .arg("daemon")
+        .stdin(std::process::Stdio::null())
+        .stdout(log.try_clone().context("clone log handle")?)
+        .stderr(log)
+        .spawn()
+        .context("spawn unblocker daemon")?;
+    let pid = child.id();
+    tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+    match child.try_wait() {
+        Ok(Some(status)) => {
+            anyhow::bail!("daemon exited immediately: {status} — see /tmp/unblocker-daemon.log")
+        }
+        Ok(None) => {
+            println!(
+                "✓ Enabled — daemon running in the background (pid {pid}). Log: /tmp/unblocker-daemon.log"
+            );
+            Ok(())
+        }
+        Err(e) => {
+            println!("daemon spawned (pid {pid}), liveness check failed: {e}");
+            Ok(())
+        }
+    }
 }
 
 async fn run_disable(_cfg: unblocker_core::config::AppConfig) -> Result<()> {

@@ -46,16 +46,18 @@ NEW_VER="$(cat "$PAYLOAD/version" 2>/dev/null || echo dev)"
 OLD_VER="$(cat "$DEST/version" 2>/dev/null || echo none)"
 
 gates() {
-    command -v systemctl >/dev/null 2>&1 || {
-        echo "Nukera requires systemd (systemctl) — not found on this system." >&2
-        echo "OpenRC/rc.d distros are not supported." >&2
+    # systemd is optional: on minimal systems (Puppy/busybox, runit, OpenRC)
+    # the daemon is started manually ('unblocker daemon' or nukera-service).
+    if ! command -v systemctl >/dev/null 2>&1; then
+        echo "  note: no systemd detected — the service will NOT be auto-enabled;"
+        echo "        start the bypass with 'unblocker daemon' (root) or 'nukera-service start'."
+    fi
+    # Root doesn't need polkit; a desktop user does.
+    if [ "$(id -u)" != 0 ] && ! command -v pkexec >/dev/null 2>&1; then
+        echo "Nukera needs root to install: run as root, or from a desktop session" >&2
+        echo "with polkit (pkexec)." >&2
         exit 1
-    }
-    command -v pkexec >/dev/null 2>&1 || {
-        echo "Nukera requires a desktop session with polkit (pkexec)." >&2
-        echo "Run from a graphical session, or use the .pkg.tar.zst package." >&2
-        exit 1
-    }
+    fi
 }
 
 do_stage() {
@@ -96,12 +98,22 @@ install_as_root() {
         echo "  [test] installed into \$NUKERA_ROOT=$NUKERA_ROOT (systemd/polkit skipped)"
         return 0
     fi
-    pkexec /bin/cp -a --no-preserve=ownership "$STAGE"/. / || {
-        rm -rf "$STAGE"
-        STAGE=""
-        echo "Install cancelled or failed — nothing was changed." >&2
-        exit 1
-    }
+    # Running as root (Puppy/minimal systems) — no polkit needed.
+    if [ "$(id -u)" = 0 ]; then
+        cp -a --no-preserve=ownership "$STAGE"/. / || {
+            rm -rf "$STAGE"
+            STAGE=""
+            echo "Install failed — nothing was changed." >&2
+            exit 1
+        }
+    else
+        pkexec /bin/cp -a --no-preserve=ownership "$STAGE"/. / || {
+            rm -rf "$STAGE"
+            STAGE=""
+            echo "Install cancelled or failed — nothing was changed." >&2
+            exit 1
+        }
+    fi
     rm -rf "$STAGE"
     STAGE=""
 }
@@ -115,8 +127,10 @@ do_install() {
 
     if [ -z "${NUKERA_ROOT:-}" ]; then
         # Polkit rule was in the copy above → the next calls stay silent.
-        systemctl daemon-reload
-        systemctl enable unblocker.service >/dev/null 2>&1 || true
+        if command -v systemctl >/dev/null 2>&1; then
+            systemctl daemon-reload
+            systemctl enable unblocker.service >/dev/null 2>&1 || true
+        fi
         if [ "$MODE" = immutable ]; then
             if command -v restorecon >/dev/null 2>&1 \
                && [ "$(getenforce 2>/dev/null)" = Enforcing ]; then
@@ -127,6 +141,31 @@ do_install() {
             sed 's#/usr/lib/nukera#/var/lib/nukera#g' \
                 "$PAYLOAD/rootfs/usr/share/applications/unblocker.desktop" \
                 > "$apps/unblocker.desktop"
+        fi
+    fi
+
+    # Host-side fixups, idempotent. Root does them directly; a desktop
+    # user goes through pkexec. Everything here is best-effort.
+    if [ "$(id -u)" = 0 ]; then
+        # 1) Broken-IPv6 hosts: prefer A records so apps don't hang on AAAA.
+        if ! grep -q "^precedence ::ffff:0:0/96  100" /etc/gai.conf 2>/dev/null; then
+            echo "precedence ::ffff:0:0/96  100" >> /etc/gai.conf 2>/dev/null || true
+        fi
+        # 2) The reestr blocklist is not bundled — fetch it if missing.
+        REESTR=/etc/unblocker/hostlists/reestr.txt
+        if [ ! -s "$REESTR" ] || [ "$(stat -c %s "$REESTR" 2>/dev/null || echo 0)" -lt 102400 ]; then
+            echo "  fetching reestr blocklist (not bundled)…"
+            curl -fL --max-time 120 \
+                "https://raw.githubusercontent.com/bol-van/rulist/main/reestr_hostname_resolvable.txt" \
+                -o "$REESTR" 2>/dev/null \
+                || echo "  warn: reestr download failed — the bypass won't start without it"
+        fi
+        # 3) NFQUEUE kernel module (minimal systems don't auto-load it).
+        modprobe nfnetlink_queue 2>/dev/null || true
+        # 4) File caps on the engine so it can run without pkexec/root.
+        if command -v setcap >/dev/null 2>&1; then
+            setcap cap_net_admin,cap_net_raw,cap_dac_override,cap_setuid,cap_setgid,cap_setpcap,cap_sys_admin=+ep \
+                "$(dirname "$DEST")/unblocker/nfqws" 2>/dev/null || true
         fi
     fi
     echo "Installed ($MODE). Launching…"
@@ -146,13 +185,23 @@ do_uninstall() {
         exit 0
     fi
     systemctl disable --now unblocker.service >/dev/null 2>&1 || true
-    pkexec /bin/rm -rf /usr/lib/nukera /usr/lib/unblocker \
-        /var/lib/nukera /var/lib/unblocker \
-        /usr/lib/systemd/system/unblocker.service \
-        /etc/systemd/system/unblocker.service || {
-        echo "Removal cancelled or failed." >&2
-        exit 1
-    }
+    if [ "$(id -u)" = 0 ]; then
+        rm -rf /usr/lib/nukera /usr/lib/unblocker \
+            /var/lib/nukera /var/lib/unblocker \
+            /usr/lib/systemd/system/unblocker.service \
+            /etc/systemd/system/unblocker.service || {
+            echo "Removal failed." >&2
+            exit 1
+        }
+    else
+        pkexec /bin/rm -rf /usr/lib/nukera /usr/lib/unblocker \
+            /var/lib/nukera /var/lib/unblocker \
+            /usr/lib/systemd/system/unblocker.service \
+            /etc/systemd/system/unblocker.service || {
+            echo "Removal cancelled or failed." >&2
+            exit 1
+        }
+    fi
     # Rule still present (removed last) → daemon-reload stays silent.
     systemctl daemon-reload 2>/dev/null || true
     pkexec /bin/rm -f /etc/polkit-1/rules.d/50-unblocker.rules || true

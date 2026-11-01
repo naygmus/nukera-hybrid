@@ -288,6 +288,82 @@ fn is_nfqws_alive() -> bool {
         .unwrap_or(false)
 }
 
+/// Best-effort load of the NFQUEUE kernel module. Minimal systems
+/// (Puppy/busybox init) don't auto-load it; on systemd distros it is
+/// built-in or auto-loaded by nft — the error is ignored there.
+pub fn ensure_nfqueue_module() {
+    if !Path::new("/proc/net/netfilter/nfnetlink_queue").exists() {
+        let _ = Command::new("modprobe").arg("nfnetlink_queue").output();
+    }
+}
+
+/// Kill every running nfqws engine (any UID). A stale engine left by a
+/// crashed/killed previous daemon keeps NFQUEUE bound, which makes our own
+/// engine die silently right after spawn. Scans /proc directly: pkill
+/// semantics differ across implementations (busybox matches the full
+/// cmdline, procps matches comm), so neither is reliable here.
+/// Returns how many engines were killed.
+pub fn kill_stale_engines() -> usize {
+    let mut killed = 0usize;
+    let dirs = match std::fs::read_dir("/proc") {
+        Ok(d) => d,
+        Err(_) => return 0,
+    };
+    for entry in dirs.flatten() {
+        let fname = entry.file_name();
+        let Some(pid_s) = fname.to_str() else { continue };
+        if !pid_s.bytes().all(|b| b.is_ascii_digit()) {
+            continue;
+        }
+        if pid_s == std::process::id().to_string() {
+            continue;
+        }
+        let comm = std::fs::read_to_string(format!("/proc/{}/comm", pid_s))
+            .unwrap_or_default();
+        if comm.trim() != "nfqws" {
+            continue;
+        }
+        if let Ok(pid) = pid_s.parse::<i32>() {
+            unsafe {
+                if libc::kill(pid, libc::SIGKILL) == 0 {
+                    killed += 1;
+                }
+            }
+        }
+    }
+    if killed > 0 {
+        tracing::warn!("nfqws: killed {} stale engine(s) from a previous run", killed);
+    }
+    killed
+}
+
+/// Verify every `--hostlist=` file in the strategy exists. nfqws aborts
+/// with a bare "cannot access hostlist file" on a missing list — surface
+/// a clear error before spawning instead. `--hostlist-auto` files are
+/// created empty if missing (nfqws grows them on its own). The reestr
+/// blocklist is downloaded at install time and is not part of the packages.
+fn validate_hostlists(args: &[String]) -> Result<()> {
+    let mut missing = Vec::new();
+    for a in args {
+        if let Some(p) = a.strip_prefix("--hostlist=") {
+            if !Path::new(p).exists() {
+                missing.push(p.to_string());
+            }
+        } else if let Some(p) = a.strip_prefix("--hostlist-auto=") {
+            if !Path::new(p).exists() {
+                let _ = std::fs::File::create(p);
+            }
+        }
+    }
+    if missing.is_empty() {
+        return Ok(());
+    }
+    anyhow::bail!(
+        "missing hostlist file(s): {}. The reestr blocklist is not bundled and must be fetched first:\n  curl -fL https://raw.githubusercontent.com/bol-van/rulist/main/reestr_hostname_resolvable.txt -o /etc/unblocker/hostlists/reestr.txt",
+        missing.join(", ")
+    )
+}
+
 /// Spawn the nfqws engine with the given strategy. Returns the Child.
 /// Captures stdout/stderr for the per-pid log; the engine is killed when
 /// the child is dropped.
@@ -297,6 +373,12 @@ fn is_nfqws_alive() -> bool {
 /// to `pkexec` which bypasses `NoNewPrivs` restrictions present in
 /// the Dart FFI process and grants full root capabilities to nfqws.
 pub fn spawn_engine(bin: &Path, args: &[String], _uid: u32) -> Result<Child> {
+    // Fail fast (with a clear message) on missing hostlist files instead of
+    // letting nfqws abort with a bare one-liner in its own log.
+    validate_hostlists(args)?;
+    // A stale engine from a previous run keeps the queue bound — clear it
+    // before spawning so our own engine doesn't die right after start.
+    kill_stale_engines();
     // Try direct foreground spawn first.
     // Without --daemon, the Child IS the nfqws process (no defunct parent).
     // File caps on the binary give it CAP_NET_ADMIN etc. without needing
@@ -308,8 +390,9 @@ pub fn spawn_engine(bin: &Path, args: &[String], _uid: u32) -> Result<Child> {
                 tracing::info!("nfqws: direct foreground spawn, queue {} bound", NFQUEUE);
                 return Ok(child);
             }
-            // nfqws died — clean up and retry via pkexec
-            tracing::warn!("nfqws: direct spawn dead after 400ms, retrying via pkexec");
+            // nfqws died — pull the reason from its log and retry via pkexec
+            let reason = last_engine_log_line();
+            tracing::warn!("nfqws: direct spawn dead after 400ms, retrying via pkexec{}", reason);
             let _ = child.kill();
             let _ = child.wait();
             nft_flush_safely();
@@ -320,6 +403,21 @@ pub fn spawn_engine(bin: &Path, args: &[String], _uid: u32) -> Result<Child> {
             nft_flush_safely();
             spawn_engine_pkexec(bin, args)
         }
+    }
+}
+
+/// Tail of this process's nfqws runtime log, for inline diagnostics.
+fn last_engine_log_line() -> String {
+    let log_path = std::path::PathBuf::from(format!(
+        "/tmp/unblocker-runtime-nfqws-{}.log",
+        std::process::id()
+    ));
+    match std::fs::read_to_string(&log_path) {
+        Ok(content) => match content.lines().next_back() {
+            Some(line) if !line.trim().is_empty() => format!(" ({})", line.trim()),
+            _ => String::new(),
+        },
+        Err(_) => String::new(),
     }
 }
 
@@ -340,6 +438,12 @@ fn spawn_engine_foreground(bin: &Path, args: &[String]) -> Result<Child> {
 /// Spawn nfqws via pkexec (runs as root, bypasses NoNewPrivs).
 /// Does NOT set USER env — pkexec already runs as root.
 fn spawn_engine_pkexec(bin: &Path, args: &[String]) -> Result<Child> {
+    if !Path::new("/usr/bin/pkexec").exists() && Command::new("pkexec").arg("--help").output().is_err() {
+        anyhow::bail!(
+            "nfqws direct spawn failed and pkexec is not available — run the daemon as root \
+             (sudo unblocker daemon) or install polkit"
+        );
+    }
     let mut cmd = Command::new("pkexec");
     cmd.arg(bin)
         .arg("--qnum").arg(NFQUEUE.to_string())

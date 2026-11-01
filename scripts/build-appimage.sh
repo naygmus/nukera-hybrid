@@ -21,12 +21,20 @@ command -v mksquashfs >/dev/null 2>&1 || {
     echo "mksquashfs (squashfs-tools) required — e.g. sudo pacman -S squashfs-tools" >&2; exit 1; }
 
 # Flutter lives outside PATH on many setups — same lookup as build-arch-pkg.sh.
-if ! command -v flutter >/dev/null 2>&1; then
-    for p in "$HOME/opt/flutter/bin" "$HOME/flutter/bin" /opt/flutter/bin; do
-        if [ -x "$p/flutter" ]; then export PATH="$p:$PATH"; break; fi
-    done
+# A prebuilt bundle can be provided instead: NUKERA_GUI_BUNDLE=/path/to/bundle
+if [ -n "${NUKERA_GUI_BUNDLE:-}" ]; then
+    BUNDLE="${NUKERA_GUI_BUNDLE}"
+    [ -d "$BUNDLE/lib" ] && [ -x "$BUNDLE/unblocker-gui" ] || {
+        echo "NUKERA_GUI_BUNDLE must be a Flutter linux bundle (lib/, data/, unblocker-gui)" >&2; exit 1; }
+    echo "Using prebuilt GUI bundle: $BUNDLE"
+else
+    if ! command -v flutter >/dev/null 2>&1; then
+        for p in "$HOME/opt/flutter/bin" "$HOME/flutter/bin" /opt/flutter/bin; do
+            if [ -x "$p/flutter" ]; then export PATH="$p:$PATH"; break; fi
+        done
+    fi
+    command -v flutter >/dev/null 2>&1 || { echo "flutter not found — set PATH or install under ~/opt/flutter (or set NUKERA_GUI_BUNDLE)" >&2; exit 1; }
 fi
-command -v flutter >/dev/null 2>&1 || { echo "flutter not found — set PATH or install under ~/opt/flutter" >&2; exit 1; }
 
 # Static type2-runtime (no libfuse2 needed on the target). Cached to ~/.cache/nukera.
 CACHE="$HOME/.cache/nukera"
@@ -42,7 +50,11 @@ fi
 echo "=== Rust core + CLI ==="
 cargo build --release
 echo "=== Flutter GUI ==="
-(cd unblocker_gui && flutter pub get >/dev/null && flutter build linux --release)
+if [ -z "${NUKERA_GUI_BUNDLE:-}" ]; then
+    (cd unblocker_gui && flutter pub get >/dev/null && flutter build linux --release)
+else
+    echo "skipped (prebuilt bundle)"
+fi
 
 VER="$(git rev-parse --short HEAD 2>/dev/null || echo dev)"
 OUT="Nukera-Linux-x86_64.AppImage"
@@ -51,7 +63,6 @@ BUILD="$(mktemp -d /tmp/nukera-appimage.XXXXXX)"
 trap 'rm -rf "$BUILD"' EXIT
 ADIR="$BUILD/Nukera.AppDir"
 RFS="$ADIR/payload/rootfs"
-BUNDLE="unblocker_gui/build/linux/x64/release/bundle"
 
 echo "=== Staging payload (mirrors PKGBUILD layout) ==="
 install -d "$RFS/usr/lib/nukera" "$RFS/usr/lib/unblocker" "$RFS/usr/bin" \
@@ -64,6 +75,10 @@ install -m755 target/release/unblocker "$RFS/usr/lib/nukera/unblocker"
 install -m755 scripts/unblocker-kill.sh "$RFS/usr/lib/nukera/unblocker-kill.sh"
 install -m755 scripts/unblocker-root-cleanup.sh "$RFS/usr/lib/nukera/unblocker-root-cleanup.sh"
 install -m755 scripts/unblocker-kill.sh "$RFS/usr/bin/unblocker-kill"
+# init-system helpers (systemd / SysV+busybox / runit / OpenRC / manual)
+install -m755 scripts/nukera-service.sh "$RFS/usr/bin/nukera-service"
+install -m755 scripts/detect-init.sh "$RFS/usr/bin/nukera-detect-init"
+install -m755 scripts/hybrid-build.sh "$RFS/usr/bin/nukera-hybrid-build"
 
 # DPI engine
 install -m755 vendor/zapret/nfqws "$RFS/usr/lib/unblocker/nfqws"

@@ -53,7 +53,11 @@ impl Driver {
     pub async fn enable_inner(&mut self, cfg: &AppConfig) -> Result<()> {
         let port = cfg.socks_port;
 
-        // Safety: flush any stale nft from previous runs
+        // Safety: flush any stale nft from previous runs, clear any stale
+        // engine (it would keep the NFQUEUE bound and kill our own spawn),
+        // and make sure the NFQUEUE module is loaded (minimal systems).
+        crate::zapret::ensure_nfqueue_module();
+        crate::zapret::kill_stale_engines();
         crate::zapret::nft_flush_safely();
         crate::zapret::probe::nft_flush_probe_tables();
 
