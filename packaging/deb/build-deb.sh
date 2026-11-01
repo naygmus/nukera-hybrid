@@ -25,6 +25,11 @@ done
 
 VER="$(git describe --tags --always 2>/dev/null || git rev-parse --short HEAD)"
 VER="${VER#v}"
+# dpkg requires a version starting with a digit; git short-sha starts with a letter
+case "$VER" in
+    [0-9]*) : ;;
+    *) VER="0.0+$VER" ;;
+esac
 PKG="nukera_${VER}_amd64"
 STAGE="$(mktemp -d /tmp/nukera-deb.XXXXXX)"
 trap 'rm -rf "$STAGE"' EXIT

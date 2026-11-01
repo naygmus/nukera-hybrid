@@ -12,6 +12,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Fetch byedpi sources (required by native-lib.c)
+        run: |
+          TAG="$(curl -sL https://api.github.com/repos/hufrea/byedpi/releases/latest \
+            | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)"
+          echo "byedpi tag: $TAG"
+          curl -fL "https://github.com/hufrea/byedpi/archive/refs/tags/${TAG}.tar.gz" \
+            -o /tmp/byedpi.tar.gz
+          tar -xzf /tmp/byedpi.tar.gz -C /tmp
+          SRC="$(find /tmp -maxdepth 1 -type d -name 'byedpi-*' | head -1)"
+          mkdir -p android-source/app/src/main/cpp/byedpi
+          cp "$SRC"/*.c "$SRC"/*.h android-source/app/src/main/cpp/byedpi/
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
