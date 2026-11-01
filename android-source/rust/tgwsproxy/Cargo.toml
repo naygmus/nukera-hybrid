@@ -40,3 +40,5 @@ lto = true
 codegen-units = 1
 panic = "abort"
 strip = true
+# Isolate from the repository root cargo workspace (crates/).
+[workspace]
