@@ -1056,24 +1056,6 @@ async fn run_routing_set(
     cfg.save()?;
     cfg.ensure_lists()?;
     // Re-apply to the installed strategy and restart the engine.
-    let root = project_root().await;
-    let nfqws = zapret::find_nfqws(&root)?;
-    let strategy_path = zapret::default_strategy_path();
-    /*let base = zapret::load_strategy_file(&strategy_path)?;
-    let mut args = cfg.apply_to_args(&base, &nfqws);
-    args.extend(unblocker_core::routing::per_site_args(&nfqws));
-    std::fs::write(&strategy_path, args.join("\n") + "\n")?; */
-     let base = zapret::load_strategy_file(&strategy_path)?;
-    let base_args = cfg.apply_to_args(&base, &nfqws);
-
-    let mut args = unblocker_core::routing::per_site_args(&nfqws);
-    if !args.is_empty() {
-        args.push("--new".into());
-        args.extend(base_args);
-    } else {
-        args = base_args;
-    }
-    std::fs::write(&strategy_path, args.join("\n") + "\n")?;
     let _ = unblocker_core::adapt::restart_service();
     println!("routing updated and engine restarted");
     Ok(())

@@ -520,7 +520,7 @@ Future<void> _hybridRevert() async {
   }
 
   Future<void> _saveRouting() async {
-    final args = ['routing-set', '--mode', _mode];
+    final args = ['routing-set', _mode];
     final domains = _domainsCtrl.text
         .split(',')
         .map((s) => s.trim())

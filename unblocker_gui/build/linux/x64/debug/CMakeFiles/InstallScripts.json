@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/cmake_install.cmake",
+		"/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/flutter/cmake_install.cmake",
+		"/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/runner/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

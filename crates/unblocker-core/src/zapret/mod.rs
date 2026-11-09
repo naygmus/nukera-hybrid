@@ -375,7 +375,12 @@ fn validate_hostlists(args: &[String]) -> Result<()> {
     for a in args {
         if let Some(p) = a.strip_prefix("--hostlist=") {
             if !Path::new(p).exists() {
-                missing.push(p.to_string());
+                // Если это сгенерированный список маршрутизации, просто создаем пустым
+                if p.contains("nukera-user.sites") || p.contains("auto.txt") {
+                    let _ = std::fs::File::create(p);
+                } else {
+                    missing.push(p.to_string());
+                }
             }
         } else if let Some(p) = a.strip_prefix("--hostlist-auto=") {
             if !Path::new(p).exists() {

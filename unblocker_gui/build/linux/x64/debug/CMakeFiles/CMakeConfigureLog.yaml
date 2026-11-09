@@ -1,0 +1,2244 @@
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineSystem.cmake:12 (find_program)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_UNAME"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "uname"
+    candidate_directories:
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/bin/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/opt/flutter/bin/uname"
+      - "/root/.cargo/bin/uname"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/uname"
+      - "/usr/lib/android-sdk/platform-tools/uname"
+    found: "/bin/uname"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineSystem.cmake:212 (message)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      The system is: Linux - 7.0.14 - x86_64
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeNinjaFindMake.cmake:5 (find_program)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_MAKE_PROGRAM"
+    description: "Program used to build from build.ninja files."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "ninja-build"
+      - "ninja"
+      - "samu"
+    candidate_directories:
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/bin/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/opt/flutter/bin/ninja-build"
+      - "/opt/flutter/bin/ninja"
+      - "/opt/flutter/bin/samu"
+      - "/root/.cargo/bin/ninja-build"
+      - "/root/.cargo/bin/ninja"
+      - "/root/.cargo/bin/samu"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/ninja-build"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/ninja"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/samu"
+      - "/usr/lib/android-sdk/platform-tools/ninja-build"
+      - "/usr/lib/android-sdk/platform-tools/ninja"
+      - "/usr/lib/android-sdk/platform-tools/samu"
+      - "/bin/ninja-build"
+    found: "/bin/ninja"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompiler.cmake:73 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:69 (_cmake_find_compiler)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_CXX_COMPILER"
+    description: "CXX compiler"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "/bin/clang++"
+    candidate_directories:
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/bin/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    found: "/bin/clang++"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:462 (find_file)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:500 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCXXCompilerId.cpp.in"
+    candidate_directories:
+      - "/usr/share/cmake-4.2/Modules/"
+    found: "/usr/share/cmake-4.2/Modules/CMakeCXXCompilerId.cpp.in"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: /bin/clang++ 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+      
+      The CXX compiler identification is Clang, found in:
+        /root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/CMakeFiles/4.2.3/CompilerIdCXX/a.out
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_AR"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-ar"
+      - "ar"
+    candidate_directories:
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/bin/llvm-ar"
+      - "/opt/flutter/bin/llvm-ar"
+      - "/root/.cargo/bin/llvm-ar"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-ar"
+      - "/usr/lib/android-sdk/platform-tools/llvm-ar"
+      - "/usr/bin/llvm-ar"
+      - "/sbin/llvm-ar"
+      - "/usr/sbin/llvm-ar"
+      - "/usr/local/bin/llvm-ar"
+      - "/root/my-applications/bin/llvm-ar"
+      - "/usr/games/llvm-ar"
+    found: "/bin/ar"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_RANLIB"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-ranlib"
+      - "ranlib"
+    candidate_directories:
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/bin/llvm-ranlib"
+      - "/opt/flutter/bin/llvm-ranlib"
+      - "/root/.cargo/bin/llvm-ranlib"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-ranlib"
+      - "/usr/lib/android-sdk/platform-tools/llvm-ranlib"
+      - "/usr/bin/llvm-ranlib"
+      - "/sbin/llvm-ranlib"
+      - "/usr/sbin/llvm-ranlib"
+      - "/usr/local/bin/llvm-ranlib"
+      - "/root/my-applications/bin/llvm-ranlib"
+      - "/usr/games/llvm-ranlib"
+    found: "/bin/ranlib"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_STRIP"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-strip"
+      - "strip"
+    candidate_directories:
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/bin/llvm-strip"
+      - "/opt/flutter/bin/llvm-strip"
+      - "/root/.cargo/bin/llvm-strip"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-strip"
+      - "/usr/lib/android-sdk/platform-tools/llvm-strip"
+      - "/usr/bin/llvm-strip"
+      - "/sbin/llvm-strip"
+      - "/usr/sbin/llvm-strip"
+      - "/usr/local/bin/llvm-strip"
+      - "/root/my-applications/bin/llvm-strip"
+      - "/usr/games/llvm-strip"
+    found: "/bin/strip"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_LINKER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "ld.lld"
+      - "ld"
+    candidate_directories:
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/bin/ld.lld"
+      - "/opt/flutter/bin/ld.lld"
+      - "/root/.cargo/bin/ld.lld"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/ld.lld"
+      - "/usr/lib/android-sdk/platform-tools/ld.lld"
+      - "/usr/bin/ld.lld"
+      - "/sbin/ld.lld"
+      - "/usr/sbin/ld.lld"
+      - "/usr/local/bin/ld.lld"
+      - "/root/my-applications/bin/ld.lld"
+      - "/usr/games/ld.lld"
+    found: "/bin/ld"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_NM"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-nm"
+      - "nm"
+    candidate_directories:
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/bin/llvm-nm"
+      - "/opt/flutter/bin/llvm-nm"
+      - "/root/.cargo/bin/llvm-nm"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-nm"
+      - "/usr/lib/android-sdk/platform-tools/llvm-nm"
+      - "/usr/bin/llvm-nm"
+      - "/sbin/llvm-nm"
+      - "/usr/sbin/llvm-nm"
+      - "/usr/local/bin/llvm-nm"
+      - "/root/my-applications/bin/llvm-nm"
+      - "/usr/games/llvm-nm"
+    found: "/bin/nm"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_OBJDUMP"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-objdump"
+      - "objdump"
+    candidate_directories:
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/bin/llvm-objdump"
+      - "/opt/flutter/bin/llvm-objdump"
+      - "/root/.cargo/bin/llvm-objdump"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-objdump"
+      - "/usr/lib/android-sdk/platform-tools/llvm-objdump"
+      - "/usr/bin/llvm-objdump"
+      - "/sbin/llvm-objdump"
+      - "/usr/sbin/llvm-objdump"
+      - "/usr/local/bin/llvm-objdump"
+      - "/root/my-applications/bin/llvm-objdump"
+      - "/usr/games/llvm-objdump"
+    found: "/bin/objdump"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_OBJCOPY"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-objcopy"
+      - "objcopy"
+    candidate_directories:
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/bin/llvm-objcopy"
+      - "/opt/flutter/bin/llvm-objcopy"
+      - "/root/.cargo/bin/llvm-objcopy"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-objcopy"
+      - "/usr/lib/android-sdk/platform-tools/llvm-objcopy"
+      - "/usr/bin/llvm-objcopy"
+      - "/sbin/llvm-objcopy"
+      - "/usr/sbin/llvm-objcopy"
+      - "/usr/local/bin/llvm-objcopy"
+      - "/root/my-applications/bin/llvm-objcopy"
+      - "/usr/games/llvm-objcopy"
+    found: "/bin/objcopy"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_READELF"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-readelf"
+      - "readelf"
+    candidate_directories:
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/bin/llvm-readelf"
+      - "/opt/flutter/bin/llvm-readelf"
+      - "/root/.cargo/bin/llvm-readelf"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-readelf"
+      - "/usr/lib/android-sdk/platform-tools/llvm-readelf"
+      - "/usr/bin/llvm-readelf"
+      - "/sbin/llvm-readelf"
+      - "/usr/sbin/llvm-readelf"
+      - "/usr/local/bin/llvm-readelf"
+      - "/root/my-applications/bin/llvm-readelf"
+      - "/usr/games/llvm-readelf"
+    found: "/bin/readelf"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_DLLTOOL"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-dlltool"
+      - "dlltool"
+    candidate_directories:
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/bin/llvm-dlltool"
+      - "/opt/flutter/bin/llvm-dlltool"
+      - "/root/.cargo/bin/llvm-dlltool"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-dlltool"
+      - "/usr/lib/android-sdk/platform-tools/llvm-dlltool"
+      - "/usr/bin/llvm-dlltool"
+      - "/sbin/llvm-dlltool"
+      - "/usr/sbin/llvm-dlltool"
+      - "/usr/local/bin/llvm-dlltool"
+      - "/root/my-applications/bin/llvm-dlltool"
+      - "/usr/games/llvm-dlltool"
+      - "/bin/dlltool"
+      - "/opt/flutter/bin/dlltool"
+      - "/root/.cargo/bin/dlltool"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/dlltool"
+      - "/usr/lib/android-sdk/platform-tools/dlltool"
+      - "/usr/bin/dlltool"
+      - "/sbin/dlltool"
+      - "/usr/sbin/dlltool"
+      - "/usr/local/bin/dlltool"
+      - "/root/my-applications/bin/dlltool"
+      - "/usr/games/dlltool"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_ADDR2LINE"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-addr2line"
+      - "addr2line"
+    candidate_directories:
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/bin/llvm-addr2line"
+      - "/opt/flutter/bin/llvm-addr2line"
+      - "/root/.cargo/bin/llvm-addr2line"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-addr2line"
+      - "/usr/lib/android-sdk/platform-tools/llvm-addr2line"
+      - "/usr/bin/llvm-addr2line"
+      - "/sbin/llvm-addr2line"
+      - "/usr/sbin/llvm-addr2line"
+      - "/usr/local/bin/llvm-addr2line"
+      - "/root/my-applications/bin/llvm-addr2line"
+      - "/usr/games/llvm-addr2line"
+    found: "/bin/addr2line"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_TAPI"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "tapi"
+    candidate_directories:
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/bin/tapi"
+      - "/opt/flutter/bin/tapi"
+      - "/root/.cargo/bin/tapi"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/tapi"
+      - "/usr/lib/android-sdk/platform-tools/tapi"
+      - "/usr/bin/tapi"
+      - "/sbin/tapi"
+      - "/usr/sbin/tapi"
+      - "/usr/local/bin/tapi"
+      - "/root/my-applications/bin/tapi"
+      - "/usr/games/tapi"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/Compiler/Clang-FindBinUtils.cmake:26 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:207 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_CXX_COMPILER_AR"
+    description: "LLVM archiver"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-ar-21.1"
+      - "llvm-ar-21"
+      - "llvm-ar21"
+      - "llvm-ar"
+    candidate_directories:
+      - "/usr/lib/llvm-21/bin/"
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/usr/lib/llvm-21/bin/llvm-ar-21.1"
+      - "/bin/llvm-ar-21.1"
+      - "/opt/flutter/bin/llvm-ar-21.1"
+      - "/root/.cargo/bin/llvm-ar-21.1"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-ar-21.1"
+      - "/usr/lib/android-sdk/platform-tools/llvm-ar-21.1"
+      - "/usr/bin/llvm-ar-21.1"
+      - "/sbin/llvm-ar-21.1"
+      - "/usr/sbin/llvm-ar-21.1"
+      - "/usr/local/bin/llvm-ar-21.1"
+      - "/root/my-applications/bin/llvm-ar-21.1"
+      - "/usr/games/llvm-ar-21.1"
+      - "/usr/lib/llvm-21/bin/llvm-ar-21"
+      - "/bin/llvm-ar-21"
+      - "/opt/flutter/bin/llvm-ar-21"
+      - "/root/.cargo/bin/llvm-ar-21"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-ar-21"
+      - "/usr/lib/android-sdk/platform-tools/llvm-ar-21"
+      - "/usr/bin/llvm-ar-21"
+      - "/sbin/llvm-ar-21"
+      - "/usr/sbin/llvm-ar-21"
+      - "/usr/local/bin/llvm-ar-21"
+      - "/root/my-applications/bin/llvm-ar-21"
+      - "/usr/games/llvm-ar-21"
+      - "/usr/lib/llvm-21/bin/llvm-ar21"
+      - "/bin/llvm-ar21"
+      - "/opt/flutter/bin/llvm-ar21"
+      - "/root/.cargo/bin/llvm-ar21"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-ar21"
+      - "/usr/lib/android-sdk/platform-tools/llvm-ar21"
+      - "/usr/bin/llvm-ar21"
+      - "/sbin/llvm-ar21"
+      - "/usr/sbin/llvm-ar21"
+      - "/usr/local/bin/llvm-ar21"
+      - "/root/my-applications/bin/llvm-ar21"
+      - "/usr/games/llvm-ar21"
+      - "/usr/lib/llvm-21/bin/llvm-ar"
+      - "/bin/llvm-ar"
+      - "/opt/flutter/bin/llvm-ar"
+      - "/root/.cargo/bin/llvm-ar"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-ar"
+      - "/usr/lib/android-sdk/platform-tools/llvm-ar"
+      - "/usr/bin/llvm-ar"
+      - "/sbin/llvm-ar"
+      - "/usr/sbin/llvm-ar"
+      - "/usr/local/bin/llvm-ar"
+      - "/root/my-applications/bin/llvm-ar"
+      - "/usr/games/llvm-ar"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/Compiler/Clang-FindBinUtils.cmake:38 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:207 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_CXX_COMPILER_RANLIB"
+    description: "Generate index for LLVM archive"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "llvm-ranlib-21.1"
+      - "llvm-ranlib-21"
+      - "llvm-ranlib21"
+      - "llvm-ranlib"
+    candidate_directories:
+      - "/usr/lib/llvm-21/bin/"
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/usr/lib/llvm-21/bin/llvm-ranlib-21.1"
+      - "/bin/llvm-ranlib-21.1"
+      - "/opt/flutter/bin/llvm-ranlib-21.1"
+      - "/root/.cargo/bin/llvm-ranlib-21.1"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-ranlib-21.1"
+      - "/usr/lib/android-sdk/platform-tools/llvm-ranlib-21.1"
+      - "/usr/bin/llvm-ranlib-21.1"
+      - "/sbin/llvm-ranlib-21.1"
+      - "/usr/sbin/llvm-ranlib-21.1"
+      - "/usr/local/bin/llvm-ranlib-21.1"
+      - "/root/my-applications/bin/llvm-ranlib-21.1"
+      - "/usr/games/llvm-ranlib-21.1"
+      - "/usr/lib/llvm-21/bin/llvm-ranlib-21"
+      - "/bin/llvm-ranlib-21"
+      - "/opt/flutter/bin/llvm-ranlib-21"
+      - "/root/.cargo/bin/llvm-ranlib-21"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-ranlib-21"
+      - "/usr/lib/android-sdk/platform-tools/llvm-ranlib-21"
+      - "/usr/bin/llvm-ranlib-21"
+      - "/sbin/llvm-ranlib-21"
+      - "/usr/sbin/llvm-ranlib-21"
+      - "/usr/local/bin/llvm-ranlib-21"
+      - "/root/my-applications/bin/llvm-ranlib-21"
+      - "/usr/games/llvm-ranlib-21"
+      - "/usr/lib/llvm-21/bin/llvm-ranlib21"
+      - "/bin/llvm-ranlib21"
+      - "/opt/flutter/bin/llvm-ranlib21"
+      - "/root/.cargo/bin/llvm-ranlib21"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-ranlib21"
+      - "/usr/lib/android-sdk/platform-tools/llvm-ranlib21"
+      - "/usr/bin/llvm-ranlib21"
+      - "/sbin/llvm-ranlib21"
+      - "/usr/sbin/llvm-ranlib21"
+      - "/usr/local/bin/llvm-ranlib21"
+      - "/root/my-applications/bin/llvm-ranlib21"
+      - "/usr/games/llvm-ranlib21"
+      - "/usr/lib/llvm-21/bin/llvm-ranlib"
+      - "/bin/llvm-ranlib"
+      - "/opt/flutter/bin/llvm-ranlib"
+      - "/root/.cargo/bin/llvm-ranlib"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/llvm-ranlib"
+      - "/usr/lib/android-sdk/platform-tools/llvm-ranlib"
+      - "/usr/bin/llvm-ranlib"
+      - "/sbin/llvm-ranlib"
+      - "/usr/sbin/llvm-ranlib"
+      - "/usr/local/bin/llvm-ranlib"
+      - "/root/my-applications/bin/llvm-ranlib"
+      - "/usr/games/llvm-ranlib"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/Compiler/Clang-FindBinUtils.cmake:50 (find_program)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:207 (include)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "program"
+    variable: "CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS"
+    description: "`clang-scan-deps` dependency scanner"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "clang-scan-deps-21.1"
+      - "clang-scan-deps-21"
+      - "clang-scan-deps21"
+      - "clang-scan-deps"
+    candidate_directories:
+      - "/usr/lib/llvm-21/bin/"
+      - "/bin/"
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+    searched_directories:
+      - "/usr/lib/llvm-21/bin/clang-scan-deps-21.1"
+      - "/bin/clang-scan-deps-21.1"
+      - "/opt/flutter/bin/clang-scan-deps-21.1"
+      - "/root/.cargo/bin/clang-scan-deps-21.1"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/clang-scan-deps-21.1"
+      - "/usr/lib/android-sdk/platform-tools/clang-scan-deps-21.1"
+      - "/usr/bin/clang-scan-deps-21.1"
+      - "/sbin/clang-scan-deps-21.1"
+      - "/usr/sbin/clang-scan-deps-21.1"
+      - "/usr/local/bin/clang-scan-deps-21.1"
+      - "/root/my-applications/bin/clang-scan-deps-21.1"
+      - "/usr/games/clang-scan-deps-21.1"
+      - "/usr/lib/llvm-21/bin/clang-scan-deps-21"
+    found: "/bin/clang-scan-deps-21"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake:83 (try_compile)"
+      - "/usr/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/CMakeFiles/CMakeScratch/TryCompile-bCRtuX"
+      binary: "/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/CMakeFiles/CMakeScratch/TryCompile-bCRtuX"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/bin/clang-scan-deps-21"
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: '/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/CMakeFiles/CMakeScratch/TryCompile-bCRtuX'
+        
+        Run Build Command(s): /bin/ninja -v cmTC_80393
+        [1/2] /bin/clang++   -v -MD -MT CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp
+        Ubuntu clang version 21.1.8 (6ubuntu1)
+        Target: x86_64-pc-linux-gnu
+        Thread model: posix
+        InstalledDir: /usr/lib/llvm-21/bin
+        Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/15
+        Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/15
+        Candidate multilib: .;@m64
+        Selected multilib: .;@m64
+         (in-process)
+         "/usr/lib/llvm-21/bin/clang" -cc1 -triple x86_64-pc-linux-gnu -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -pic-is-pie -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -funwind-tables=2 -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/CMakeFiles/CMakeScratch/TryCompile-bCRtuX -v -fcoverage-compilation-dir=/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/CMakeFiles/CMakeScratch/TryCompile-bCRtuX -resource-dir /usr/lib/llvm-21/lib/clang/21 -dependency-file CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/x86_64-linux-gnu/c++/15 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15/backward -internal-isystem /usr/lib/llvm-21/lib/clang/21/include -internal-isystem /usr/local/include -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/15/../../../../x86_64-linux-gnu/include -internal-externc-isystem /usr/include/x86_64-linux-gnu -internal-externc-isystem /include -internal-externc-isystem /usr/include -fdeprecated-macro -ferror-limit 19 -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp
+        clang -cc1 version 21.1.8 based upon LLVM 21.1.8 default target x86_64-pc-linux-gnu
+        ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/15/../../../../x86_64-linux-gnu/include"
+        ignoring nonexistent directory "/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15
+         /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/x86_64-linux-gnu/c++/15
+         /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15/backward
+         /usr/lib/llvm-21/lib/clang/21/include
+         /usr/local/include
+         /usr/include/x86_64-linux-gnu
+         /usr/include
+        End of search list.
+        [2/2] : && /bin/clang++  -v -Wl,-v CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_80393   && :
+        Ubuntu clang version 21.1.8 (6ubuntu1)
+        Target: x86_64-pc-linux-gnu
+        Thread model: posix
+        InstalledDir: /usr/lib/llvm-21/bin
+        Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/15
+        Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/15
+        Candidate multilib: .;@m64
+        Selected multilib: .;@m64
+         "/bin/ld" --hash-style=gnu --build-id --eh-frame-hdr -m elf_x86_64 -pie -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_80393 /lib/x86_64-linux-gnu/Scrt1.o /lib/x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib64 -L/lib/x86_64-linux-gnu -L/lib/../lib64 -L/usr/lib/x86_64-linux-gnu -L/usr/lib64 -L/lib -L/usr/lib -v CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /lib/x86_64-linux-gnu/crtn.o
+        GNU ld (GNU Binutils for Ubuntu) 2.46
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake:217 (message)"
+      - "/usr/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Parsed CXX implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [/usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15]
+          add: [/usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/x86_64-linux-gnu/c++/15]
+          add: [/usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15/backward]
+          add: [/usr/lib/llvm-21/lib/clang/21/include]
+          add: [/usr/local/include]
+          add: [/usr/include/x86_64-linux-gnu]
+          add: [/usr/include]
+        end of search list found
+        collapse include dir [/usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15] ==> [/usr/include/c++/15]
+        collapse include dir [/usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/x86_64-linux-gnu/c++/15] ==> [/usr/include/x86_64-linux-gnu/c++/15]
+        collapse include dir [/usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15/backward] ==> [/usr/include/c++/15/backward]
+        collapse include dir [/usr/lib/llvm-21/lib/clang/21/include] ==> [/usr/lib/llvm-21/lib/clang/21/include]
+        collapse include dir [/usr/local/include] ==> [/usr/local/include]
+        collapse include dir [/usr/include/x86_64-linux-gnu] ==> [/usr/include/x86_64-linux-gnu]
+        collapse include dir [/usr/include] ==> [/usr/include]
+        implicit include dirs: [/usr/include/c++/15;/usr/include/x86_64-linux-gnu/c++/15;/usr/include/c++/15/backward;/usr/lib/llvm-21/lib/clang/21/include;/usr/local/include;/usr/include/x86_64-linux-gnu;/usr/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake:253 (message)"
+      - "/usr/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
+        ignore line: [Change Dir: '/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/CMakeFiles/CMakeScratch/TryCompile-bCRtuX']
+        ignore line: []
+        ignore line: [Run Build Command(s): /bin/ninja -v cmTC_80393]
+        ignore line: [[1/2] /bin/clang++   -v -MD -MT CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Ubuntu clang version 21.1.8 (6ubuntu1)]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Thread model: posix]
+        ignore line: [InstalledDir: /usr/lib/llvm-21/bin]
+        ignore line: [Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/15]
+        ignore line: [Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/15]
+        ignore line: [Candidate multilib: .]
+        ignore line: [@m64]
+        ignore line: [Selected multilib: .]
+        ignore line: [@m64]
+        ignore line: [ (in-process)]
+        ignore line: [ "/usr/lib/llvm-21/bin/clang" -cc1 -triple x86_64-pc-linux-gnu -emit-obj -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -pic-is-pie -mframe-pointer=all -fmath-errno -ffp-contract=on -fno-rounding-math -mconstructor-aliases -funwind-tables=2 -target-cpu x86-64 -tune-cpu generic -debugger-tuning=gdb -fdebug-compilation-dir=/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/CMakeFiles/CMakeScratch/TryCompile-bCRtuX -v -fcoverage-compilation-dir=/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/debug/CMakeFiles/CMakeScratch/TryCompile-bCRtuX -resource-dir /usr/lib/llvm-21/lib/clang/21 -dependency-file CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/x86_64-linux-gnu/c++/15 -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15/backward -internal-isystem /usr/lib/llvm-21/lib/clang/21/include -internal-isystem /usr/local/include -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/15/../../../../x86_64-linux-gnu/include -internal-externc-isystem /usr/include/x86_64-linux-gnu -internal-externc-isystem /include -internal-externc-isystem /usr/include -fdeprecated-macro -ferror-limit 19 -fgnuc-version=4.2.1 -fskip-odr-check-in-gmf -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [clang -cc1 version 21.1.8 based upon LLVM 21.1.8 default target x86_64-pc-linux-gnu]
+        ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/15/../../../../x86_64-linux-gnu/include"]
+        ignore line: [ignoring nonexistent directory "/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15]
+        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/x86_64-linux-gnu/c++/15]
+        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/15/../../../../include/c++/15/backward]
+        ignore line: [ /usr/lib/llvm-21/lib/clang/21/include]
+        ignore line: [ /usr/local/include]
+        ignore line: [ /usr/include/x86_64-linux-gnu]
+        ignore line: [ /usr/include]
+        ignore line: [End of search list.]
+        ignore line: [[2/2] : && /bin/clang++  -v -Wl -v CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_80393   && :]
+        ignore line: [Ubuntu clang version 21.1.8 (6ubuntu1)]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Thread model: posix]
+        ignore line: [InstalledDir: /usr/lib/llvm-21/bin]
+        ignore line: [Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/15]
+        ignore line: [Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/15]
+        ignore line: [Candidate multilib: .]
+        ignore line: [@m64]
+        ignore line: [Selected multilib: .]
+        ignore line: [@m64]
+        link line: [ "/bin/ld" --hash-style=gnu --build-id --eh-frame-hdr -m elf_x86_64 -pie -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_80393 /lib/x86_64-linux-gnu/Scrt1.o /lib/x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib64 -L/lib/x86_64-linux-gnu -L/lib/../lib64 -L/usr/lib/x86_64-linux-gnu -L/usr/lib64 -L/lib -L/usr/lib -v CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /lib/x86_64-linux-gnu/crtn.o]
+          arg [/bin/ld] ==> ignore
+          arg [--hash-style=gnu] ==> ignore
+          arg [--build-id] ==> ignore
+          arg [--eh-frame-hdr] ==> ignore
+          arg [-m] ==> ignore
+          arg [elf_x86_64] ==> ignore
+          arg [-pie] ==> ignore
+          arg [-dynamic-linker] ==> ignore
+          arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_80393] ==> ignore
+          arg [/lib/x86_64-linux-gnu/Scrt1.o] ==> obj [/lib/x86_64-linux-gnu/Scrt1.o]
+          arg [/lib/x86_64-linux-gnu/crti.o] ==> obj [/lib/x86_64-linux-gnu/crti.o]
+          arg [/usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o]
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/15] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/15]
+          arg [-L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib64] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib64]
+          arg [-L/lib/x86_64-linux-gnu] ==> dir [/lib/x86_64-linux-gnu]
+          arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+          arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
+          arg [-L/usr/lib64] ==> dir [/usr/lib64]
+          arg [-L/lib] ==> dir [/lib]
+          arg [-L/usr/lib] ==> dir [/usr/lib]
+          arg [-v] ==> ignore
+          arg [CMakeFiles/cmTC_80393.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [-lstdc++] ==> lib [stdc++]
+          arg [-lm] ==> lib [m]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [-lc] ==> lib [c]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [/usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o]
+          arg [/lib/x86_64-linux-gnu/crtn.o] ==> obj [/lib/x86_64-linux-gnu/crtn.o]
+        linker tool for 'CXX': /bin/ld
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/15] ==> [/usr/lib/gcc/x86_64-linux-gnu/15]
+        collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib64] ==> [/usr/lib64]
+        collapse library dir [/lib/x86_64-linux-gnu] ==> [/lib/x86_64-linux-gnu]
+        collapse library dir [/lib/../lib64] ==> [/lib64]
+        collapse library dir [/usr/lib/x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
+        collapse library dir [/usr/lib64] ==> [/usr/lib64]
+        collapse library dir [/lib] ==> [/lib]
+        collapse library dir [/usr/lib] ==> [/usr/lib]
+        implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
+        implicit objs: [/lib/x86_64-linux-gnu/Scrt1.o;/lib/x86_64-linux-gnu/crti.o;/usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o;/usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o;/lib/x86_64-linux-gnu/crtn.o]
+        implicit dirs: [/usr/lib/gcc/x86_64-linux-gnu/15;/usr/lib64;/lib/x86_64-linux-gnu;/lib64;/usr/lib/x86_64-linux-gnu;/lib;/usr/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/Internal/CMakeDetermineLinkerId.cmake:38 (message)"
+      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompilerABI.cmake:299 (cmake_determine_linker_id)"
+      - "/usr/share/cmake-4.2/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Running the CXX compiler's linker: "/bin/ld" "-v"
+      GNU ld (GNU Binutils for Ubuntu) 2.46
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:517 (find_program)"
+      - "flutter/CMakeLists.txt:24 (find_package)"
+    mode: "program"
+    variable: "PKG_CONFIG_EXECUTABLE"
+    description: "pkg-config executable"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "pkg-config"
+      - "pkgconf"
+    candidate_directories:
+      - "/opt/flutter/bin/"
+      - "/root/.cargo/bin/"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/"
+      - "/usr/lib/android-sdk/platform-tools/"
+      - "/bin/"
+      - "/usr/bin/"
+      - "/sbin/"
+      - "/usr/sbin/"
+      - "/usr/local/bin/"
+      - "/root/my-applications/bin/"
+      - "/usr/games/"
+      - "/usr/local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/"
+      - "/usr/bin/"
+      - "/usr/sbin/"
+      - "/usr/"
+      - "/bin/"
+      - "/sbin/"
+      - "/usr/X11R6/bin/"
+      - "/usr/X11R6/sbin/"
+      - "/usr/X11R6/"
+      - "/usr/pkg/bin/"
+      - "/usr/pkg/sbin/"
+      - "/usr/pkg/"
+      - "/opt/bin/"
+      - "/opt/sbin/"
+      - "/opt/"
+    searched_directories:
+      - "/opt/flutter/bin/pkg-config"
+      - "/opt/flutter/bin/pkgconf"
+      - "/root/.cargo/bin/pkg-config"
+      - "/root/.cargo/bin/pkgconf"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/pkg-config"
+      - "/usr/lib/android-sdk/cmdline-tools/19.0/bin/pkgconf"
+      - "/usr/lib/android-sdk/platform-tools/pkg-config"
+      - "/usr/lib/android-sdk/platform-tools/pkgconf"
+    found: "/bin/pkg-config"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_gtk-3"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "gtk-3"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libgtk-3.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_gdk-3"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "gdk-3"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libgdk-3.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_pangocairo-1.0"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "pangocairo-1.0"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libpangocairo-1.0.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_cairo-gobject"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "cairo-gobject"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libcairo-gobject.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_gdk_pixbuf-2.0"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "gdk_pixbuf-2.0"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_atk-1.0"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "atk-1.0"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libatk-1.0.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_pango-1.0"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "pango-1.0"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libpango-1.0.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_cairo"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "cairo"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libcairo.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_harfbuzz"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "harfbuzz"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libharfbuzz.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_gio-2.0"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "gio-2.0"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libgio-2.0.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_gobject-2.0"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "gobject-2.0"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libgobject-2.0.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_glib-2.0"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "glib-2.0"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libglib-2.0.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:25 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GTK_z"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "z"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libz.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:26 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GLIB_glib-2.0"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "glib-2.0"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libglib-2.0.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:27 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GIO_gio-2.0"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "gio-2.0"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libgio-2.0.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:27 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GIO_gobject-2.0"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "gobject-2.0"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libgobject-2.0.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:761 (find_library)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:811 (_pkg_find_libs)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1149 (_pkg_recalculate)"
+      - "/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake:1166 (_pkg_check_modules_internal)"
+      - "flutter/CMakeLists.txt:27 (pkg_check_modules)"
+    mode: "library"
+    variable: "pkgcfg_lib_GIO_glib-2.0"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "glib-2.0"
+    candidate_directories:
+      - "/usr/lib/x86_64-linux-gnu/"
+    found: "/usr/lib/x86_64-linux-gnu/libglib-2.0.so"
+    search_context:
+      ENV{PATH}:
+        - "/opt/flutter/bin"
+        - "/root/.cargo/bin"
+        - "/usr/lib/android-sdk/cmdline-tools/19.0/bin"
+        - "/usr/lib/android-sdk/platform-tools"
+        - "/bin"
+        - "/usr/bin"
+        - "/sbin"
+        - "/usr/sbin"
+        - "/usr/local/bin"
+        - "/root/my-applications/bin"
+        - "/usr/games"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+...

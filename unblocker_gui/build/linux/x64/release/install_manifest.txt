@@ -1,0 +1,13 @@
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/unblocker-gui
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/data/icudtl.dat
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/lib/libflutter_linux_gtk.so
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/data/flutter_assets/version.json
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/data/flutter_assets/fonts/MaterialIcons-Regular.otf
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/data/flutter_assets/NativeAssetsManifest.json
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/data/flutter_assets/AssetManifest.bin
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/data/flutter_assets/shaders/ink_sparkle.frag
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/data/flutter_assets/shaders/stretch_effect.frag
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/data/flutter_assets/FontManifest.json
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/data/flutter_assets/NOTICES.Z
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/lib/libapp.so
+/root/fork/nukera-hybrid/unblocker_gui/build/linux/x64/release/bundle/lib/libunblocker_core.so

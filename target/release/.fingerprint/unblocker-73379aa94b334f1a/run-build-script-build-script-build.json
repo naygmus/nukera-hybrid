@@ -1,0 +1,1 @@
+{"rustc":16068036557036712160,"features":"","declared_features":"","target":0,"profile":0,"path":0,"deps":[[3009819728399781559,"build_script_build",false,7023438418675413539]],"local":[{"RerunIfChanged":{"output":"release/build/unblocker-73379aa94b334f1a/output","paths":["../../vendor/byedpi/ciadpi","../../vendor/byedpi/Makefile"]}}],"rustflags":[],"config":0,"compile_kind":0}

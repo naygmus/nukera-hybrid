@@ -1,0 +1,2 @@
+cargo:rerun-if-changed=../../vendor/byedpi/ciadpi
+cargo:rerun-if-changed=../../vendor/byedpi/Makefile
