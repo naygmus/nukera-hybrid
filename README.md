@@ -92,7 +92,7 @@ Nukera-hybrid — анблочит **Instagram, Telegram, YouTube, Discord, Face
 ## Где может не работать
 Linux версия:
 
-- Нужен Linux c свежим glibc (≥ 2.39): Arch/Manjaro, Fedora ≥ 39 (вкл. Silverblue), Ubuntu 24.04 LTS, Debian 13, openSUSE Tumbleweed, Puppy Linux (свежие версии) Evolutin.
+- Нужен Linux c свежим glibc (≥ 2.39): Arch/Manjaro, Fedora ≥ 39 (вкл. Silverblue), Ubuntu 24.04 LTS, Debian 13, openSUSE Tumbleweed, Puppy linux ResolutePup64 version 26.04.
 - На старых Ubuntu 22.04 / Debian 12 может не запуститься — будет показано предупреждение.
 
 
