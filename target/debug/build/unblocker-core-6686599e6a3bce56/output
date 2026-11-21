@@ -1,2 +1,0 @@
-cargo:rerun-if-changed=../../vendor/tun2socks-c
-cargo:rerun-if-changed=../../vendor/byedpi

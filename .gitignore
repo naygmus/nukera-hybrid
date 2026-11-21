@@ -1,0 +1,96 @@
+# ── Rust build artifacts ────────────────────────────────────────────────
+/target/
+**/target/
+*.rlib
+*.rmeta
+*.d
+*.so
+*.a
+*.dylib
+*.dll
+*.exe
+
+# ── Flutter / Dart build artifacts ──────────────────────────────────────
+unblocker_gui/build/
+unblocker_gui/.dart_tool/
+unblocker_gui/.flutter-plugins
+unblocker_gui/.flutter-plugins-dependencies
+unblocker_gui/.packages
+unblocker_gui/.pub-cache/
+unblocker_gui/.pub/
+**/build/
+**/.dart_tool/
+*.dill
+*.track.dill
+.flutter-plugins
+
+# ── Android build artifacts ─────────────────────────────────────────────
+android-source/.gradle/
+android-source/build/
+android-source/app/build/
+android-source/app/.cxx/
+android-source/local.properties
+android-source/rust/tgwsproxy/target/
+android-source/app/src/main/cpp/byedpi/
+android-source/app/src/main/cpp/tun2socks-c/
+android-source/app/src/main/java/hev/
+android-source/app/src/main/jniLibs/
+android-source/app/src/main/jniLibs-tg/
+android-source/app/src/main/jni/Android.mk
+android-source/app/src/main/jni/Application.mk
+*.apk
+*.aab
+
+# ── Build outputs / dist ────────────────────────────────────────────────
+/dist/
+Nukera-Linux-x86_64.AppImage
+Nukera-Linux-x86_64.deb
+Nukera-MacOS.dmg
+Nukera-Windows.exe
+Nukera-Android-*.apk
+/Nukera-win/
+
+# ── Vendored dependencies (если не хотите держать их в git) ─────────────
+# Раскомментируйте, если vendor/ не должен быть в репозитории:
+# /vendor/
+# vendor/byedpi/
+# vendor/zapret/
+# vendor/tg-ws-proxy-rs/
+# vendor/ByeByeDPI-master/
+# vendor/tun2socks-c/
+
+# ── Logs / temp / backups ───────────────────────────────────────────────
+*.log
+*.backup
+*.bak
+*.orig
+*.rej
+*.swp
+*.tmp
+*~
+.DS_Store
+Thumbs.db
+
+# ── Android logs (конкретные) ───────────────────────────────────────────
+android-source/after_fix.log
+android-source/ciadpi.log
+android-source/hev_proxy.log
+android-source/proxy_*.log
+android-source/run*.log
+android-source/site_*.log
+android-source/strategy*.log
+android-source/vpn*.log
+android-source/vpnsni.log
+android-source/rutracker_vpn.log
+android-source/proxy_test_results.json
+android-source/*.zip
+
+# ── IDE / editor ────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# ── OS ──────────────────────────────────────────────────────────────────
+.DS_Store
