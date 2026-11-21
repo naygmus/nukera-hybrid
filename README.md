@@ -107,9 +107,9 @@ Linux версия:
 ## Из исходников
 
 `bash
-# нужно: cargo (rustup), Flutter stable, squashfs-tools,
-#        + yt-dlp для «Поиск CDN» (необязательно на этапе сборки,
-#          обязательно на целевой машине для cdn-scan)
+нужно: cargo (rustup), Flutter stable, squashfs-tools,
++ yt-dlp для «Поиск CDN» (необязательно на этапе сборки,
+обязательно на целевой машине для cdn-scan)
 scripts/build-appimage.sh
 
 
