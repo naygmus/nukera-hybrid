@@ -123,9 +123,9 @@ Results are written to `/etc/unblocker/cdn_hosts.txt` and `/etc/unblocker/cdn_ho
 ## From source (for developers)
 
 `bash
-# needs: cargo (rustup), Flutter stable, squashfs-tools,
-#        + yt-dlp for "Find CDN" (optional at build time,
-#          required on the target machine for cdn-scan)
+needs: cargo (rustup), Flutter stable, squashfs-tools,
++ yt-dlp for "Find CDN" (optional at build time,
+required on the target machine for cdn-scan)
 scripts/build-appimage.sh
 
 ## What's inside
