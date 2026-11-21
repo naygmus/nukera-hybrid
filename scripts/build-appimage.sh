@@ -87,6 +87,7 @@ install -m755 vendor/zapret/nfqws "$RFS/usr/lib/unblocker/nfqws"
 # Config: strategies (top-level + pool + byebyedpi), hostlists, sites
 install -d "$RFS/etc/unblocker/strategies/pool/byebyedpi" \
     "$RFS/etc/unblocker/hostlists" "$RFS/etc/unblocker/sites"
+install -m644 config/links-youtube.links "$RFS/etc/unblocker/links-youtube.links"
 install -m644 config/zapret/strategies/*.strat "$RFS/etc/unblocker/strategies/"
 install -m644 config/zapret/strategies/pool/*.strat "$RFS/etc/unblocker/strategies/pool/"
 install -m644 config/zapret/strategies/pool/byebyedpi/*.strat "$RFS/etc/unblocker/strategies/pool/byebyedpi/"

@@ -1,5 +1,5 @@
 pub mod adapt;
-
+pub mod cdn;
 pub mod api;
 pub mod bypass;
 pub mod config;

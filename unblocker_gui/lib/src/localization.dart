@@ -35,6 +35,10 @@ class AppLocalizations {
       'settings': 'Settings',
       'language': 'Language',
       'autostart': 'Autostart with system',
+      'cdnSection': 'YouTube CDN discovery',
+      'cdnHint': 'Scan video links for googlevideo servers, then pick a strategy and route each host',
+      'cdnLinksLabel': 'Links file',
+      'cdnScan': 'Find CDN',
     },
     'ru': {
       'appTitle': 'Nukera',
@@ -71,6 +75,10 @@ class AppLocalizations {
       'routingSaved': 'Маршрутизация сохранена',
       'engineRestarted': 'Движок перезапущен',
       'engineRestartFailed': 'Не удалось перезапустить движок',
+      'cdnSection': 'Поиск CDN YouTube',
+      'cdnHint': 'Сканирует ссылки на видео, находит серверы googlevideo, подбирает для них стратегию и маршрутизирует',
+      'cdnLinksLabel': 'Файл со ссылками',
+      'cdnScan': 'Поиск CDN',
 },
   };
 

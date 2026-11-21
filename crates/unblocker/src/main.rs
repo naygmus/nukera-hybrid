@@ -81,7 +81,14 @@ enum Cmd {
         #[arg(required = true)]
         hosts: Vec<String>,
     },
-
+/// Scan YouTube video links for googlevideo CDN hosts, then adapt each
+/// host's strategy and add it to routing.
+/// Progress: /tmp/unblocker-adapt.json (same file the GUI already polls).
+CdnScan {
+    /// Links file (default: /etc/unblocker/links-youtube.links)
+    #[arg(long)]
+    links: Option<String>,
+},
     /// Build one multi-profile strategy: base + per-site winners
     HybridBuild,
 
@@ -139,6 +146,7 @@ async fn main() -> Result<()> {
             Ok(())
         }
         Some(Cmd::AdaptSites { hosts }) => run_adapt_sites(&hosts).await,
+        Some(Cmd::CdnScan { links }) => run_cdn_scan(links).await,
         Some(Cmd::HybridBuild) => run_hybrid_build().await,
         Some(Cmd::HybridRevert) => run_hybrid_revert(),
         Some(Cmd::HybridCheck) => run_hybrid_check().await,
@@ -1001,6 +1009,11 @@ async fn run_adapt_sites(hosts: &[String]) -> Result<()> {
     Ok(())
 }
 
+async fn run_cdn_scan(links: Option<String>) -> Result<()> {
+    let msg = unblocker_core::cdn::cdn_scan_and_adapt(links.as_deref()).await?;
+    println!("{msg}");
+    Ok(())
+}
 async fn run_hybrid_build() -> Result<()> {
     let root = project_root().await;
     let nfqws = zapret::find_nfqws(&root)?;

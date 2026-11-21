@@ -76,6 +76,9 @@ install -m644 config/hosts/telegram-web.txt "$STAGE/$PKG/etc/unblocker/hostlists
 install -m644 config/hosts/magila-cdn.txt "$STAGE/$PKG/etc/unblocker/hostlists/magila-cdn.txt"
 touch "$STAGE/$PKG/etc/unblocker/hostlists/auto.txt"
 
+# "Find CDN" links template (do not overwrite user's file on upgrade)
+install -m644 config/links-youtube.links "$STAGE/$PKG/etc/unblocker/links-youtube.links"
+
 install -m644 packaging/systemd/unblocker.service "$STAGE/$PKG/usr/lib/systemd/system/unblocker.service"
 install -m644 packaging/polkit/50-unblocker.rules "$STAGE/$PKG/etc/polkit-1/rules.d/50-unblocker.rules"
 install -m644 packaging/desktop/unblocker.desktop "$STAGE/$PKG/usr/share/applications/unblocker.desktop"
@@ -91,6 +94,7 @@ Section: net
 Priority: optional
 Architecture: amd64
 Depends: libc6 (>= 2.31), libgtk-3-0, nftables, curl, iptables, iproute2
+Recommends: yt-dlp
 Suggests: policykit-1
 Maintainer: naygmus <naygmus@users.noreply.github.com>
 Homepage: https://github.com/naygmus/nukera-hybrid
@@ -141,6 +145,20 @@ EOF
 cat > "$CTRL/postrm" << 'EOF'
 #!/bin/sh
 rm -f /var/run/unblocker.pid
+# Preserve user-edited links file across upgrades: dpkg will have
+# overwritten /etc/unblocker/links-youtube.links with the packaged
+# template. If the user had a non-template file, it was backed up by
+# dpkg as .dpkg-old — restore it.
+LINKS=/etc/unblocker/links-youtube.links
+if [ -f "$LINKS.dpkg-old" ] && [ -s "$LINKS.dpkg-old" ]; then
+    # Only restore if the old file differs from the packaged template
+    # (i.e. the user edited it).
+    if ! cmp -s "$LINKS" "$LINKS.dpkg-old"; then
+        mv -f "$LINKS.dpkg-old" "$LINKS"
+    else
+        rm -f "$LINKS.dpkg-old"
+    fi
+fi
 exit 0
 EOF
 chmod 755 "$CTRL/postinst" "$CTRL/postrm"

@@ -203,11 +203,28 @@ if [ -d "$ROOT/config/zapret/hostlists" ]; then
     done
 fi
 echo "  Hostlists + static hosts installed"
-
+# ─── 9b. Links template for "Find CDN" (cdn-scan) ──────────────────
+LINKS_FILE="$ETC_DIR/links-youtube.links"
+if [ ! -f "$LINKS_FILE" ]; then
+    if [ -f "$ROOT/config/links-youtube.links" ]; then
+        install -m 0644 "$ROOT/config/links-youtube.links" "$LINKS_FILE"
+        echo "  Links template installed: $LINKS_FILE"
+    else
+        echo "  ⚠ config/links-youtube.links not found in repo — cdn-scan will use built-in defaults"
+    fi
+else
+    echo "  Links file already present: $LINKS_FILE (kept as-is)"
+fi
 # ─── 10. .desktop file ──────────────────────────────────────────────
 install -m 0644 "$ROOT/packaging/desktop/unblocker.desktop" /usr/share/applications/unblocker.desktop
 echo "  Desktop file installed"
-
+# ─── 12. Optional runtime dep: yt-dlp (for cdn-scan) ────────────────
+if command -v yt-dlp >/dev/null 2>&1; then
+    echo "  yt-dlp: $(yt-dlp --version 2>/dev/null | head -n1) — cdn-scan enabled"
+else
+    echo "  ⚠ yt-dlp not found — 'Find CDN' (unblocker cdn-scan) will be unavailable."
+    echo "    Install: pip install -U yt-dlp   (or your distro's package)"
+fi
 # ─── 11. Restart polkitd to pick up rules (systemd distros only) ────
 if [ "$SERVICE_MODE" = "systemd" ] && command -v systemctl >/dev/null 2>&1; then
     systemctl restart polkit 2>/dev/null || true

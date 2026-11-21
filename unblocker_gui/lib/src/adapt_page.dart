@@ -25,6 +25,8 @@ class _AdaptPageState extends State<AdaptPage> {
   bool _running = false;
   List<String> _sites = [];
   final _siteCtrl = TextEditingController();
+  final _cdnLinksCtrl = TextEditingController();
+  bool _cdnScanning = false;
   String _mode = 'all';
   final _domainsCtrl = TextEditingController();
   final _excludesCtrl = TextEditingController();
@@ -45,6 +47,7 @@ class _AdaptPageState extends State<AdaptPage> {
     _domainsCtrl.dispose();
     _excludesCtrl.dispose();
     super.dispose();
+    _cdnLinksCtrl.dispose();
   }
 
   void _toast(String msg) {
@@ -104,8 +107,10 @@ class _AdaptPageState extends State<AdaptPage> {
       }
       return (r.stdout as String).trim();
     } on ProcessException catch (e) {
-      return 'ERR: ${e.executable}: ${e.message}';
-    }
+  return 'ERR: ${e.executable}: ${e.message}';
+} catch (e) {
+  return 'ERR: $e';
+}
   }
 
  
@@ -149,41 +154,34 @@ class _AdaptPageState extends State<AdaptPage> {
     return '$strat → $host';
   }
   
-//fix DeepSeek
-  Future<void> _loadProgress() async {
-    try {
-      final s = await File('/tmp/unblocker-adapt.json').readAsString();
-      if (!mounted) return;
-      final raw = jsonDecode(s);
-      if (raw is! Map) return;
-      final stage = _str(raw['stage']);
-      final p = <String, dynamic>{
-        'stage':    stage,
-        'message':  _str(raw['message']),
-        'best':     raw['best'], // Передаем объект как есть, его распарсит _bestStrategy
-        'current':  _int(raw['current']), // <--- ИСПРАВЛЕНО
-        'total':    _int(raw['total']),
-      };
-      setState(() {
-        _progress = p;
-        const terminal = {'done', 'error', 'cancelled'};
-        _running = stage.isNotEmpty && !terminal.contains(stage);
-      });
-    } catch (_) {}
-  }
-//fix
+Future<void> _loadProgress() async {
+  try {
+    final s = await File('/tmp/unblocker-adapt.json').readAsString();
+    if (!mounted) return;
+    final raw = jsonDecode(s);
+    if (raw is! Map) return;
+    final stage = _str(raw['stage']);
 
-  /*void _startPolling() {
-    _poll?.cancel();
-    _poll = Timer.periodic(const Duration(milliseconds: 900), (_) {
-      _loadProgress();
-      if (!mounted) return;
-      if (!_running) {
-        _poll?.cancel();
-        _refreshSites();
-      }
+    // Если никакая операция не идёт — не перезаписываем экран
+    // последним стейтом из файла. Это защищает от гонки: поллинг,
+    // запущенный до finally, дочитывает файл уже после того, как
+    // мы очистили _progress.
+    if (!_running && !_cdnScanning && !_addingSite) return;
+
+    final p = <String, dynamic>{
+      'stage':    stage,
+      'message':  _str(raw['message']),
+      'best':     raw['best'],
+      'current':  _int(raw['current']),
+      'total':    _int(raw['total']),
+    };
+    setState(() {
+      _progress = p;
+      const terminal = {'done', 'error', 'cancelled'};
+      _running = stage.isNotEmpty && !terminal.contains(stage);
     });
-  }*/
+  } catch (_) {}
+}
      void _startPolling() {
     _poll?.cancel();
     _poll = Timer.periodic(const Duration(milliseconds: 900), (_) async {
@@ -400,45 +398,50 @@ class _AdaptPageState extends State<AdaptPage> {
     _toast(msg);
     await _refreshSites();
   }
+Future<void> _cdnScan() async {
+  if (_cdnScanning) return;
+  try {
+    await File('/tmp/unblocker-adapt.json').delete();
+  } catch (_) {}
+  setState(() {
+    _cdnScanning = true;
+    _running = true;
+    _status = '';
+    _progress = {
+      'stage': 'cdn_scanning',
+      'current': 0,
+      'total': 0,
+      'message': 'scanning links...',
+    };
+  });
+  if (!mounted) return;
+  _startPolling();
 
-  /*Future<void> _loadSitesFromFile() async {
-    if (_addingSite) return;
-
-    try {
-      final r = await Process.run('zenity', [
-        '--file-selection',
-        '--title=Выберите файл со списком сайтов',
-        '--file-filter=Текстовые файлы (*.txt, *.csv, *.list) | *.txt *.csv *.list',
-        '--file-filter=Все файлы | *',
-      ]);
-
-      if (r.exitCode != 0) return; // Отмена
-
-      final path = (r.stdout as String).trim();
-      if (path.isEmpty) return;
-
-      final file = File(path);
-      if (!await file.exists()) {
-        _toast('Файл не найден: $path');
-        return;
-      }
-
-      final content = await file.readAsString();
-      if (content.trim().isEmpty) {
-        _toast('Файл пуст');
-        return;
-      }
-
-      _siteCtrl.text = content;
-      final count = content.split(RegExp(r'[\s,]+')).where((s) => s.trim().isNotEmpty).length;
-      _toast('Загружено $count сайт(ов). Нажмите "+" для подбора.');
-
-    } on ProcessException {
-      _toast('Ошибка: утилита zenity не найдена.');
-    } catch (e) {
-      _toast('Ошибка чтения файла: $e');
+  String msg = '';
+  try {
+    final args = ['cdn-scan'];
+    final path = _cdnLinksCtrl.text.trim();
+    if (path.isNotEmpty) args.addAll(['--links', path]);
+    final rawMsg = await _pkexec(args);
+    msg = _extractResult(rawMsg);
+  } catch (e) {
+    msg = 'ERR: $e';
+  } finally {
+    _poll?.cancel();
+    _poll = null;
+    if (mounted) {
+      setState(() {
+        _cdnScanning = false;
+        _running = false;
+        _progress = {};   // ← убрать "scanning links 0/0"
+      });
     }
-  }*/
+  }
+
+  if (!mounted) return;
+  _toast(msg);
+  await _refreshSites();
+}
   
   Future<void> _removeSite(String host) async {
     try {
@@ -628,6 +631,52 @@ Future<void> _hybridRevert() async {
             ),
           ),
 
+          Card(
+  color: const Color(0xFF16202E),
+  child: Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(AppLocalizations.tr('cdnSection'),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 16)),
+        const SizedBox(height: 8),
+        Text(AppLocalizations.tr('cdnHint'),
+            style: const TextStyle(fontSize: 13)),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _cdnLinksCtrl,
+          decoration: InputDecoration(
+            labelText: AppLocalizations.tr('cdnLinksLabel'),
+            hintText: '/etc/unblocker/links-youtube.links',
+            isDense: true,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Row(children: [
+          ElevatedButton.icon(
+            onPressed: _cdnScanning ? null : _cdnScan,
+            icon: _cdnScanning
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2))
+                : const Icon(Icons.travel_explore),
+            label: Text(AppLocalizations.tr('cdnScan')),
+          ),
+        ]),
+        if (_cdnScanning) ...[
+          const SizedBox(height: 8),
+          LinearProgressIndicator(value: frac),
+          const SizedBox(height: 4),
+          Text('$message ($attempts/$total)',
+              style: const TextStyle(fontSize: 13)),
+        ],
+      ],
+    ),
+  ),
+),
           Card(
             color: const Color(0xFF16202E),
             child: Padding(

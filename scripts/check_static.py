@@ -19,6 +19,7 @@ FILES = [
     "unblocker_gui/lib/src/adapt_page.dart",
     "unblocker_gui/lib/src/home_page.dart",
     "unblocker_gui/lib/src/localization.dart",
+    "crates/unblocker-core/src/cdn/mod.rs",
 ]
 
 REQUIRED = [
@@ -35,6 +36,11 @@ REQUIRED = [
     ("unblocker_gui/lib/src/localization.dart", "routingSaved"),
     ("packaging/polkit/50-unblocker.rules", "/usr/lib/nukera/unblocker"),
     ("packaging/polkit/50-unblocker.rules", "/usr/bin/unblocker"),
+    ("crates/unblocker/src/main.rs", "Cmd::CdnScan"),
+("crates/unblocker-core/src/cdn/mod.rs", "DEFAULT_LINKS"),
+("crates/unblocker-core/src/cdn/mod.rs", "yt-dlp"),
+("config/links-youtube.links", "youtube.com/watch"),
+("packaging/deb/build-deb.sh", "links-youtube.links"),
 ]
 
 FORBIDDEN = ["__PART", "omitted here", "TODO-PATCH"]
